@@ -1,0 +1,48 @@
+@plugin "daisyui/theme" {
+	name: 'twobeone';
+	default: true;
+	prefersdark: false;
+	color-scheme: light;
+
+	/* Brand colors */
+	--color-primary: oklch(41.2% 0.17 16.9); /* #8b1538 - Burgundy */
+	--color-primary-focus: oklch(33.7% 0.15 16.9); /* #6b0f2a - Deep Burgundy */
+	--color-primary-content: oklch(100% 0 0); /* #ffffff */
+
+	--color-secondary: oklch(78.7% 0.16 83.9); /* #d4af37 - Gold */
+	--color-secondary-focus: oklch(72.5% 0.15 83.9); /* #c19b2a */
+	--color-secondary-content: oklch(27.5% 0.04 64.6); /* #2c2420 */
+
+	--color-accent: oklch(64.8% 0.09 16.8); /* #b8718d - Light Wine */
+	--color-accent-focus: oklch(57.4% 0.09 16.8); /* #9d5a74 */
+	--color-accent-content: oklch(100% 0 0); /* #ffffff */
+
+	--color-neutral: oklch(27.5% 0.04 64.6); /* #2c2420 - Charcoal */
+	--color-neutral-focus: oklch(16.7% 0.03 64.6); /* #1a1512 */
+	--color-neutral-content: oklch(100% 0 0); /* #ffffff */
+
+	--color-base-100: oklch(100% 0 0); /* #ffffff */
+	--color-base-200: oklch(98% 0.01 90); /* #faf8f5 - Cream */
+	--color-base-300: oklch(91.3% 0.01 85); /* #e5dfd9 - Light Border */
+	--color-base-content: oklch(27.5% 0.04 64.6); /* #2c2420 */
+
+	/* Status colors */
+	--color-info: oklch(52.6% 0.13 244); /* #0369a1 */
+	--color-success: oklch(48.5% 0.09 162); /* #2d6a4f */
+	--color-warning: oklch(73.1% 0.16 82.5); /* #f59e0b */
+	--color-error: oklch(56.3% 0.21 25); /* #dc2626 */
+
+	/* Radii */
+	--radius-selector: 1rem;
+	--radius-field: 0.25rem;
+	--radius-box: 0.5rem;
+
+	/* Sizes */
+	--size-selector: 0.25rem;
+	--size-field: 0.25rem;
+
+	/* Border & effects */
+	--border: 1px;
+	--depth: 1;
+	--noise: 0;
+}

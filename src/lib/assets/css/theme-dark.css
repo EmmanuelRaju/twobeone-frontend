@@ -1,0 +1,48 @@
+@plugin "daisyui/theme" {
+	name: 'twobeone-dark';
+	default: false;
+	prefersdark: true;
+	color-scheme: dark;
+
+	/* Brand colors */
+	--color-primary: oklch(60% 0.15 16.9); /* Softer burgundy for dark bg */
+	--color-primary-focus: oklch(55% 0.15 16.9);
+	--color-primary-content: oklch(98% 0 0); /* near white */
+
+	--color-secondary: oklch(75% 0.14 83.9); /* gold */
+	--color-secondary-focus: oklch(70% 0.14 83.9);
+	--color-secondary-content: oklch(18% 0.04 64.6); /* warm dark brown */
+
+	--color-accent: oklch(68% 0.09 16.8); /* light wine */
+	--color-accent-focus: oklch(62% 0.09 16.8);
+	--color-accent-content: oklch(98% 0 0);
+
+	--color-neutral: oklch(22% 0.03 64.6); /* dark charcoal */
+	--color-neutral-focus: oklch(18% 0.03 64.6);
+	--color-neutral-content: oklch(96% 0 0); /* light text */
+
+	--color-base-100: oklch(18% 0.02 64.6); /* deep background */
+	--color-base-200: oklch(24% 0.02 64.6);
+	--color-base-300: oklch(30% 0.02 64.6);
+	--color-base-content: oklch(94% 0 0);
+
+	/* Status colors */
+	--color-info: oklch(65% 0.13 244);
+	--color-success: oklch(62% 0.1 162);
+	--color-warning: oklch(75% 0.16 82.5);
+	--color-error: oklch(60% 0.21 25);
+
+	/* Radii */
+	--radius-selector: 1rem;
+	--radius-field: 0.25rem;
+	--radius-box: 0.5rem;
+
+	/* Sizes */
+	--size-selector: 0.25rem;
+	--size-field: 0.25rem;
+
+	/* Border & effects */
+	--border: 1px;
+	--depth: 1;
+	--noise: 0;
+}

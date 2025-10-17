@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+@import './lib/assets/css/theme.css';
+/* @import './lib/assets/css/theme-dark.css'; */
+@plugin "daisyui" {
+	themes: twobeone --default;
+}
+@custom-variant hover (&:hover);
+
+@theme {
+	--font-heading: 'Inter', san-serif;
+	--font-body: 'Inter', san-serif;
+}
+
+@layer base {
+	body {
+		@apply font-body leading-relaxed font-normal text-base-content;
+	}
+}
+
+@layer utilities {
+	.container-width {
+		@apply max-w-4xl xl:max-w-5xl;
+	}
+}
