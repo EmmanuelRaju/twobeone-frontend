@@ -2,21 +2,25 @@
 	import { FormField } from '$lib/components';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { zod4 } from 'sveltekit-superforms/adapters';
-	import { SEmailLogin } from '$lib/schemas';
-	import { emailLoginFormFields } from './data';
+	import { SForgotPassword } from '$lib/schemas';
+	import { forgotPasswordFormFields } from './data';
 
 	let { data } = $props();
 
 	const { form, errors, enhance } = superForm(data.form, {
-		validators: zod4(SEmailLogin)
+		validators: zod4(SForgotPassword)
 	});
 </script>
 
 <main class="container-width mx-auto prose p-5">
-	<h1 class="text-center">Login</h1>
+	<h1 class="text-center">Forgot password</h1>
+
+	<p class="mx-auto max-w-md text-center">
+		Please enter your registered email to receive further instructions
+	</p>
 
 	<form method="POST" class="mx-auto flex max-w-md flex-col gap-5" use:enhance>
-		{#each emailLoginFormFields as field, i (i)}
+		{#each forgotPasswordFormFields as field, i (i)}
 			<FormField
 				label={field.label}
 				name={field.name}
@@ -25,8 +29,6 @@
 				bind:errors={$errors}
 			/>
 		{/each}
-		<button class="btn mt-2 w-full btn-primary" type="submit">Login</button>
-
-		<a href="/forgot-password" class="btn btn-ghost">Forgot password?</a>
+		<button class="btn mt-2 w-full btn-primary" type="submit">Send</button>
 	</form>
 </main>
