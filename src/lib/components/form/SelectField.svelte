@@ -1,0 +1,71 @@
+<script lang="ts">
+	import Select from 'svelte-select';
+	import { FormErrorText } from '$lib/components';
+	import { browser } from '$app/environment';
+
+	let {
+		label,
+		name,
+		options = [],
+		form = $bindable(),
+		errors = $bindable(),
+		multiple = false,
+		placeholder
+	} = $props();
+
+	// Format options for svelte-select
+	const formatOptions = (options: string[]) => {
+		return options.map((option) => ({
+			value: option,
+			label: option
+		}));
+	};
+
+	// Handle selection changes for multi-select
+	const handleMultiSelect = (selectedItems: Array<{ value: string }>) => {
+		form[name] = selectedItems ? selectedItems.map((item) => item.value) : [];
+	};
+
+	$effect(() => {
+		if (multiple && !form[name]) {
+			form[name] = [];
+		}
+	});
+</script>
+
+<div>
+	<label class="label" for={name}>{label}</label>
+	<div class="relative">
+		{#if multiple}
+			{#if browser}
+				<Select
+					{name}
+					items={formatOptions(options)}
+					value={Array.isArray(form[name])
+						? form[name].map((val) => ({ value: val, label: val }))
+						: undefined}
+					on:change={({ detail }) => handleMultiSelect(detail)}
+					multiple
+					clearable
+					searchable
+					{placeholder}
+				/>
+			{/if}
+		{:else}
+			<select
+				{name}
+				class="select-bordered select w-full"
+				bind:value={form[name]}
+				aria-invalid={errors[name] ? 'true' : undefined}
+			>
+				<option value="">{placeholder || `Select ${label}`}</option>
+				{#each options as option}
+					<option value={option}>{option}</option>
+				{/each}
+			</select>
+		{/if}
+	</div>
+	<FormErrorText>
+		{errors[name]}
+	</FormErrorText>
+</div>

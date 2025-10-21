@@ -1,214 +1,88 @@
 <form>
-  <!-- Profile created by -->
-  <label>Profile created by *</label>
-  <select>
-    <option>--Select--</option>
-    <option>Self</option>
-    <option>Parents</option>
-    <option>Sibling</option>
-    <option>Relative</option>
-    <option>Friend</option>
-  </select>
+	<!-- Profile created by -->
+	<label>Profile created by *</label>
+	<select>
+		['self','parents','sibling','relative','friend']
+	</select>
 
-  <!-- Name -->
-  <label>Name *</label>
-  <input type="text" />
+	<!-- Name -->
+	<label>Name *</label>
+	<input type="text" />
 
-  <!-- Date of Birth -->
-  <label>Date of Birth *</label>
+	<!-- Date of Birth -->
+	<label>Date of Birth *</label>
 
-  <!-- Marital status -->
-  <label>Marital status *</label>
-  <input type="radio" name="marital"> Unmarried
-  <input type="radio" name="marital"> Widow / Widower
-  <input type="radio" name="marital"> Divorced
-  <input type="radio" name="marital"> Separated
+	<!-- Marital status -->
+	<label>Marital status *</label>
+	['unmarried','widow / widower', 'divorced', 'separated']
 
-  <!-- Height -->
-  <label>Height *</label>
+	<!-- Height -->
+	<label>Height *</label>
 
-  <!-- Weight -->
-  <label>Weight</label>
+	<!-- Weight -->
+	<label>Weight</label>
 
-  <!-- Physical Status -->
-  <label>Physical Status *</label>
-  <input type="radio" name="physical"> Normal
-  <input type="radio" name="physical"> Physically Challenged
+	<!-- Physical Status -->
+	<label>Physical Status *</label>
+	['normal','physically challenged']
 
-  <!-- Denomination -->
-  <label>Denomination *</label>
-  <select>
-    <option>--- Select ---</option>
-    <option>Adventist</option>
-    <option>Anglican / Episcopal</option>
-    <option>Apostolic</option>
-    <option>Assyrian</option>
-    <option>Assembly of God (AG)</option>
-    <option>Baptist</option>
-    <option>Born Again</option>
-    <option>Brethren</option>
-    <option>Calvinist</option>
-    <option>Catholic</option>
-    <option>Church of God</option>
-    <option>Church of South India (CSI)</option>
-    <option>Church of Christ</option>
-    <option>Church of North India</option>
-    <option>Congregational</option>
-    <option>East Indian Catholic</option>
-    <option>Evangelical</option>
-    <option>Knanaya</option>
-    <option>Knanaya Catholic</option>
-    <option>Knanaya Jacobite</option>
-    <option>Jacobite</option>
-    <option>Jehovah's Witnesses</option>
-    <option>Latin Catholic</option>
-    <option>Latter day saints</option>
-    <option>Lutheran</option>
-    <option>Malankara</option>
-    <option>Malabar Independent Syrian Church</option>
-    <option>Marthoma</option>
-    <option>Melkite</option>
-    <option>Mennonite</option>
-    <option>Methodist</option>
-    <option>Moravian</option>
-    <option>Orthodox</option>
-    <option>Pentecostal</option>
-    <option>Protestant</option>
-    <option>Presbyterian</option>
-    <option>Reformed Baptist</option>
-    <option>Reformed Presbyterian</option>
-    <option>Seventh-day Adventist</option>
-    <option>St. Thomas Evangelical</option>
-    <option>Syro Malabar</option>
-    <option>Syrian Catholic</option>
-    <option>Syrian Jacobite</option>
-    <option>Syrian Orthodox</option>
-    <option>Others</option>
-  </select>
+	<!-- Denomination -->
+	<label>Denomination *</label>
+	<select>
+		['Adventist', 'Anglican / Episcopal', 'Apostolic', 'Assyrian', 'Assembly of God (AG)',
+		'Baptist', 'Born Again', 'Brethren', 'Calvinist', 'Catholic', 'Church of God', 'Church of South
+		India (CSI)', 'Church of Christ', 'Church of North India', 'Congregational', 'East Indian
+		Catholic', 'Evangelical', 'Knanaya', 'Knanaya Catholic', 'Knanaya Jacobite', 'Jacobite',
+		'Jehovah's Witnesses', 'Latin Catholic', 'Latter day saints', 'Lutheran', 'Malankara', 'Malabar
+		Independent Syrian Church', 'Marthoma', 'Melkite', 'Mennonite', 'Methodist', 'Moravian',
+		'Orthodox', 'Pentecostal', 'Protestant', 'Presbyterian', 'Reformed Baptist', 'Reformed
+		Presbyterian', 'Seventh-day Adventist', 'St. Thomas Evangelical', 'Syro Malabar', 'Syrian
+		Catholic', 'Syrian Jacobite', 'Syrian Orthodox', 'Others']
+	</select>
 
-  <!-- Division -->
-  <label>Division *</label>
-  <select>
-    <option>--- Select ---</option>
-    <option>Adi Dravidar</option><option>Anglo Indian</option>
-    <option>Chettiar</option><option>Garo</option><option>Goan</option>
-    <option>Gounder</option><option>Kamma</option><option>Kapu</option><option>Khasi</option>
-    <option>Knanaya</option><option>Kuki</option><option>Madiga</option>
-    <option>Mahar</option><option>Mala</option><option>Mangalorean</option>
-    <option>Matang</option><option>Mizo</option><option>Mudaliar</option>
-    <option>Mukkuvar</option><option>Nadar</option><option>Naga</option><option>Naidu</option>
-    <option>Oraon / Kurukh</option><option>Padmashali</option>
-    <option>Pallar / Devendrakula Vellalar</option>
-    <option>Paravar / Bharathar / Fernando</option>
-    <option>Parkavakulam / Udayar</option>
-    <option>Pillai</option><option>Pulayar / Cherumar</option>
-    <option>Rajaka / Vannar</option><option>Reddy</option>
-    <option>Sambavar</option><option>SC</option><option>Setti Balija</option>
-    <option>ST</option><option>Thevar / Mukkulathor</option>
-    <option>Vaniya Chettiar</option><option>Vanniya Kula Kshatriyar</option><option>Vellalar</option>
-    <option>Vishwakarma</option><option>Yadavar</option>
-    <option>Intercaste</option><option>Others</option>
-    <option>Don't know division</option><option>Don't wish to specify</option>
-  </select>
+	<!-- Division -->
+	<label>Division *</label>
+	<select>
+		["Don't know division", "Don't wish to specify", 'Adi Dravidar', 'Anglo Indian', 'Chettiar',
+		'Garo', 'Goan', 'Gounder', 'Kamma', 'Kapu', 'Khasi', 'Knanaya', 'Kuki', 'Madiga', 'Mahar',
+		'Mala', 'Mangalorean', 'Matang', 'Mizo', 'Mudaliar', 'Mukkuvar', 'Nadar', 'Naga', 'Naidu',
+		'Oraon / Kurukh', 'Padmashali', 'Pallar / Devendrakula Vellalar', 'Paravar / Bharathar /
+		Fernando', 'Parkavakulam / Udayar', 'Pillai', 'Pulayar / Cherumar', 'Rajaka / Vannar', 'Reddy',
+		'Sambavar', 'SC', 'Setti Balija', 'ST', 'Thevar / Mukkulathor', 'Vaniya Chettiar', 'Vanniya Kula
+		Kshatriyar', 'Vellalar', 'Vishwakarma', 'Yadavar', 'Intercaste', 'Others']
+	</select>
 
-  <!-- Subcaste -->
-  <label>Subcaste</label>
-  <input type="text" />
+	<!-- Subcaste -->
+	<label>Subcaste</label>
+	<input type="text" />
 
-  <!-- Mother tongue -->
-  <label>Mother tongue *</label>
-  <select>
-    <option>Select Mother Tongue</option>
-    <option>Assamese</option>
-    <option>Bengali</option>
-    <option>English</option>
-    <option>Gujarati</option>
-    <option>Hindi</option>
-    <option>Kannada</option>
-    <option>Konkani</option>
-    <option>Malayalam</option>
-    <option>Marathi</option>
-    <option>Marwari</option>
-    <option>Odiya</option>
-    <option>Punjabi</option>
-    <option>Sindhi</option>
-    <option>Tamil</option>
-    <option>Telugu</option>
-    <option>Urdu</option>
-    <!-- extended list -->
-    <option>Angika</option>
-    <option>Arunachali</option>
-    <option>Awadhi</option>
-    <option>Badaga</option>
-    <option>Bhojpuri</option>
-    <option>Bihari</option>
-    <option>Brij</option>
-    <option>Chatisgarhi</option>
-    <option>Dogri</option>
-    <option>French</option>
-    <option>Garhwali</option>
-    <option>Garo</option>
-    <option>Haryanvi</option>
-    <option>Himachali/Pahari</option>
-    <option>Kanauji</option>
-    <option>Kashmiri</option>
-    <option>Khandesi</option>
-    <option>Khasi</option>
-    <option>Koshali</option>
-    <option>Kumoani</option>
-    <option>Kutchi</option>
-    <option>Ladacki</option>
-    <option>Lepcha</option>
-    <option>Magahi</option>
-    <option>Maithili</option>
-    <option>Manipuri</option>
-    <option>Miji</option>
-    <option>Monpa</option>
-    <option>Nepali</option>
-    <option>Nicobarese</option>
-    <option>Rajasthani</option>
-    <option>Sanskrit</option>
-    <option>Santhali</option>
-    <option>Sourashtra</option>
-    <option>Tripuri</option>
-    <option>Tulu</option>
-    <!-- ... -->
-  </select>
+	<!-- Mother tongue -->
+	<label>Mother tongue *</label>
+	<select>
+		['Assamese', 'Bengali', 'English', 'Gujarati', 'Hindi', 'Kannada', 'Konkani', 'Malayalam',
+		'Marathi', 'Marwari', 'Odiya', 'Punjabi', 'Sindhi', 'Tamil', 'Telugu', 'Urdu', 'Angika',
+		'Arunachali', 'Awadhi', 'Badaga', 'Bhojpuri', 'Bihari', 'Brij', 'Chatisgarhi', 'Dogri',
+		'French', 'Garhwali', 'Garo', 'Haryanvi', 'Himachali/Pahari', 'Kanauji', 'Kashmiri', 'Khandesi',
+		'Khasi', 'Koshali', 'Kumoani', 'Kutchi', 'Ladacki', 'Lepcha', 'Magahi', 'Maithili', 'Manipuri',
+		'Miji', 'Monpa', 'Nepali', 'Nicobarese', 'Rajasthani', 'Sanskrit', 'Santhali', 'Sourashtra',
+		'Tripuri', 'Tulu']
+	</select>
 
-  <!-- Languages Known -->
-  <label>Languages Known</label>
-  <select multiple>
-    <option>Assamese</option><option>Bengali</option>
-    <option>Gujarati</option><option>Kannada</option>
-    <option>Kashmiri</option><option>Konkani</option>
-    <option>Kutchi</option><option>Malayalam</option>
-    <option>Marathi</option><option>Marwadi</option><option>Odiya</option>
-    <option>Punjabi</option><option>Sindhi</option>
-    <option>Tamil</option><option>Tulu</option>
-    <option>Urdu</option><option>English</option>
-    <option>Hindi</option><option>Telugu</option>
-  </select>
+	<!-- Languages Known -->
+	<label>Languages Known</label>
 
-  <!-- Eating Habits -->
-  <label>Eating Habits</label>
-  <input type="radio" name="eating"> Vegetarian
-  <input type="radio" name="eating"> Non-vegetarian
-  <input type="radio" name="eating"> Eggetarian
-  <input type="radio" name="eating"> Vegan
+	<!-- Eating Habits -->
+	<label>Eating Habits</label>
+	['Vegetarian','Non-vegetarian','Eggetarian','Vegan']
 
-  <!-- Smoking Habits -->
-  <label>Smoking Habits</label>
-  <input type="radio" name="smoking"> Non-smoker
-  <input type="radio" name="smoking"> Light / Social smoker
-  <input type="radio" name="smoking"> Regular smoker
+	<!-- Smoking Habits -->
+	<label>Smoking Habits</label>
+	[ 'Non-smoker', 'Light / Social smoker', 'Regular smoker' ]
 
-  <!-- Drinking Habits -->
-  <label>Drinking Habits</label>
-  <input type="radio" name="drinking"> Non-drinker
-  <input type="radio" name="drinking"> Light / Social drinker
-  <input type="radio" name="drinking"> Regular drinker
-
-  <!-- About Me -->
-  <label>About Me *</label>
-  <textarea></textarea>
+	<!-- Drinking Habits -->
+	<label>Drinking Habits</label>
+	['Non-drinker' 'Light / Social drinker' 'Regular drinker' ]
+	<!-- About Me -->
+	<label>About Me *</label>
+	<textarea></textarea>
 </form>

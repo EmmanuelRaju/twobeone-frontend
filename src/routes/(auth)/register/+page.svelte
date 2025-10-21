@@ -2,13 +2,13 @@
 	import { FormField } from '$lib/components';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { zod4 } from 'sveltekit-superforms/adapters';
-	import { commonRegistrationSchema } from '$lib/schemas';
+	import { SCommonRegistration } from '$lib/schemas';
 	import { commonRegistrationFormFields } from './data';
 
 	let { data } = $props();
 
 	const { form, errors, enhance } = superForm(data.form, {
-		validators: zod4(commonRegistrationSchema)
+		validators: zod4(SCommonRegistration)
 	});
 </script>
 
