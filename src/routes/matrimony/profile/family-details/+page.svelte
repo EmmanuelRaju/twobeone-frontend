@@ -1,55 +1,33 @@
-<script lang="ts"></script>
+<script lang="ts">
+	import { FormField } from '$lib/components';
+	import { superForm } from 'sveltekit-superforms/client';
+	import { zod4 } from 'sveltekit-superforms/adapters';
+	import { SFamily } from '$lib/schemas';
+	import { familyFormFields } from './data';
 
-<section class="space-y-6">
-	<h2 class="text-xl font-semibold">Family Details</h2>
+	let { data } = $props();
 
-	<div>
-		<label class="label" for="fatherOccupation">Father’s Occupation</label>
-		<input
-			id="fatherOccupation"
-			name="fatherOccupation"
-			type="text"
-			class="input-bordered input w-full"
-		/>
-	</div>
+	const { form, errors, enhance } = superForm(data.form, {
+		validators: zod4(SFamily),
+		dataType: 'json'
+	});
+</script>
 
-	<div>
-		<label class="label" for="motherOccupation">Mother’s Occupation</label>
-		<input
-			id="motherOccupation"
-			name="motherOccupation"
-			type="text"
-			class="input-bordered input w-full"
-		/>
-	</div>
+<main class="container-width mx-auto prose p-5">
+	<h1 class="text-center">Family details</h1>
 
-	<div>
-		<label class="label" for="siblings">Siblings</label>
-		<div class="grid grid-cols-2 gap-2">
-			<input name="brothers" placeholder="Brothers" type="number" class="input-bordered input" />
-			<input name="sisters" placeholder="Sisters" type="number" class="input-bordered input" />
-		</div>
-	</div>
-
-	<fieldset>
-		<legend class="label">Family Type</legend>
-		<div class="flex gap-4">
-			{#each ['Joint', 'Nuclear', 'Others'] as type}
-				<label class="flex items-center gap-2">
-					<input type="radio" name="familyType" value={type} class="radio" />
-					{type}
-				</label>
-			{/each}
-		</div>
-	</fieldset>
-
-	<div>
-		<label class="label" for="familyValues">Family Values</label>
-		<select id="familyValues" name="familyValues" class="select-bordered select w-full">
-			<option value="">Select</option>
-			{#each ['Traditional', 'Moderate', 'Liberal'] as val}
-				<option value={val}>{val}</option>
-			{/each}
-		</select>
-	</div>
-</section>
+	<form method="POST" class="mx-auto flex max-w-md flex-col gap-5" use:enhance>
+		{#each familyFormFields as field}
+			<FormField
+				label={field.label}
+				name={field.name}
+				type={field.type}
+				options={field.options}
+				mode={field.mode}
+				bind:form={$form}
+				bind:errors={$errors}
+			/>
+		{/each}
+		<button class="btn mt-2 w-full btn-primary" type="submit">Save</button>
+	</form>
+</main>

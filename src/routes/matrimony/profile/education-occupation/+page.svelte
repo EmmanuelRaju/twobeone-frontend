@@ -1,50 +1,33 @@
-<script lang="ts"></script>
+<script lang="ts">
+	import { FormField } from '$lib/components';
+	import { superForm } from 'sveltekit-superforms/client';
+	import { zod4 } from 'sveltekit-superforms/adapters';
+	import { SEducationOccupation } from '$lib/schemas';
+	import { educationOccupationFormFields } from './data';
 
-<section class="space-y-6">
-	<h2 class="text-xl font-semibold">Education & Occupation</h2>
+	let { data } = $props();
 
-	<div>
-		<label class="label" for="educationLevel">Highest Education</label>
-		<select id="educationLevel" name="educationLevel" class="select-bordered select w-full">
-			<option value="">Select</option>
-			{#each ['Doctorate (Ph.D)', 'Post Graduate', 'Graduate', 'Diploma', 'Higher Secondary', 'Secondary', 'Others'] as level}
-				<option value={level}>{level}</option>
-			{/each}
-		</select>
-	</div>
+	const { form, errors, enhance } = superForm(data.form, {
+		validators: zod4(SEducationOccupation),
+		dataType: 'json'
+	});
+</script>
 
-	<div>
-		<label class="label" for="educationField">Field of Study</label>
-		<select id="educationField" name="educationField" class="select-bordered select w-full">
-			<option value="">Select Field</option>
-			{#each ['Engineering', 'Medicine', 'Arts', 'Science', 'Commerce', 'Law', 'Education', 'Theology', 'Management', 'Computer Science', 'Others'] as field}
-				<option value={field}>{field}</option>
-			{/each}
-		</select>
-	</div>
+<main class="container-width mx-auto prose p-5">
+	<h1 class="text-center">Education & Occupation</h1>
 
-	<div>
-		<label class="label" for="occupation">Occupation</label>
-		<select id="occupation" name="occupation" class="select-bordered select w-full">
-			<option value="">Select Occupation</option>
-			{#each ['Software Professional', 'Teacher', 'Engineer', 'Doctor', 'Nurse', 'Accountant', 'Manager', 'Clergy', 'Missionary', 'Business', 'Self Employed', 'Student', 'Others'] as occ}
-				<option value={occ}>{occ}</option>
-			{/each}
-		</select>
-	</div>
-
-	<div>
-		<label class="label" for="employer">Employer / Organization</label>
-		<input id="employer" name="employer" type="text" class="input-bordered input w-full" />
-	</div>
-
-	<div>
-		<label class="label" for="income">Annual Income (INR)</label>
-		<select id="income" name="income" class="select-bordered select w-full">
-			<option value="">Select</option>
-			{#each ['Below 1 Lakh', '1-2 Lakhs', '2-5 Lakhs', '5-10 Lakhs', '10-20 Lakhs', '20-50 Lakhs', '50 Lakhs - 1 Crore', 'Above 1 Crore'] as range}
-				<option value={range}>{range}</option>
-			{/each}
-		</select>
-	</div>
-</section>
+	<form method="POST" class="mx-auto flex max-w-md flex-col gap-5" use:enhance>
+		{#each educationOccupationFormFields as field}
+			<FormField
+				label={field.label}
+				name={field.name}
+				type={field.type}
+				options={field.options}
+				mode={field.mode}
+				bind:form={$form}
+				bind:errors={$errors}
+			/>
+		{/each}
+		<button class="btn mt-2 w-full btn-primary" type="submit">Save</button>
+	</form>
+</main>

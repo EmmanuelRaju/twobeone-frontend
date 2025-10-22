@@ -58,9 +58,17 @@
 				bind:value={form[name]}
 				aria-invalid={errors[name] ? 'true' : undefined}
 			>
-				<option value="">{placeholder || `Select ${label}`}</option>
+				<!-- <option value="">{placeholder || `Select ${label}`}</option> -->
 				{#each options as option}
-					<option value={option}>{option}</option>
+					{#if typeof option === 'string'}
+						<option value={option}>{option}</option>
+					{:else}
+						<optgroup label={option.groupName}>
+							{#each option.children as item, i (i)}
+								<option value={item}>{item}</option>
+							{/each}
+						</optgroup>
+					{/if}
 				{/each}
 			</select>
 		{/if}
