@@ -1,8 +1,22 @@
-export const profileCreatedBy = ['self', 'parents', 'sibling', 'relative', 'friend'];
+export const profileCreatedBy = ['Self', 'Parents', 'Sibling', 'Relative', 'Friend'];
 
-export const maritalStatus = ['unmarried', 'widow / widower', 'divorced', 'separated'];
+export const maritalStatus = ['Unmarried', 'Widow / Widower', 'Divorced', 'Separated'];
 
-export const physicalStatus = ['normal', 'physically challenged'];
+export const gender = ['Male', 'Female'];
+
+export const physicalStatus = ['Normal', 'Physically challenged'];
+
+const getHeights = () => {
+	const _heights = [];
+	for (let i = 3; i < 8; i++) {
+		for (let j = 0; j < 11; j++) {
+			_heights.push(`${i} feet ${j ? j + ' inches' : ''}`);
+		}
+	}
+	return _heights;
+};
+
+export const heights = getHeights();
 
 export const denominations = [
 	'Adventist',

@@ -3,6 +3,8 @@ import {
 	divisions,
 	drinkingHabits,
 	eatingHabits,
+	gender,
+	heights,
 	languages,
 	maritalStatus,
 	physicalStatus,
@@ -44,19 +46,21 @@ export const basicProfileFormFields: {
 		options: maritalStatus
 	},
 	{
-		label: 'Height (ft)',
-		name: 'heightFeet',
-		type: 'number'
-	},
-	{
-		label: 'Height (inches)',
-		name: 'heightInches',
-		type: 'number'
+		label: 'Height',
+		name: 'height',
+		type: 'select',
+		options: heights
 	},
 	{
 		label: 'Weight (kgs)',
 		name: 'weight',
 		type: 'number'
+	},
+	{
+		label: 'Gender',
+		name: 'gender',
+		type: 'select',
+		options: gender
 	},
 	{
 		label: 'Physical status',
