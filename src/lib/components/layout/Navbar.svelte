@@ -2,6 +2,7 @@
 	import type { TNavLink } from '$lib/models';
 	import { slide } from 'svelte/transition';
 	import { Minus, Plus } from '@lucide/svelte';
+	import { Logo } from '$lib/components';
 
 	let { navLinks }: { navLinks: TNavLink[] } = $props();
 
@@ -15,8 +16,7 @@
 
 <header class="relative flex min-h-[60px] w-full items-center bg-base-100 px-2.5 shadow-sm">
 	<a href="/" aria-label="AMI" class="absolute z-[1] w-14 lg:w-20">
-		<!-- <enhanced:img src={logo} alt="AMI" class="h-full w-full object-contain"></enhanced:img> -->
-		2b1
+		<Logo></Logo>
 	</a>
 	<div class="container-width mx-auto hidden w-full items-center lg:flex">
 		{#each navLinks as navLink (navLink.id)}

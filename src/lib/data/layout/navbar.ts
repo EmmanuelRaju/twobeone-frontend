@@ -7,3 +7,16 @@ export const navlinks: TNavLink[] = [
 		href: '/'
 	}
 ];
+
+export const homePageNavlinks: TNavLink[] = [
+	{
+		id: 'contact',
+		label: 'Contact us',
+		href: '/contact-us'
+	},
+	{
+		id: 'how-to-use',
+		label: 'How to use',
+		href: '/how-to-use'
+	}
+];
