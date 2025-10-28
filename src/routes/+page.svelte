@@ -10,13 +10,6 @@
 		</ul>
 	</section>
 
-	<section id="hero-animation" class="text-center italic">
-		<blockquote class="text-2xl font-semibold text-primary">
-			“...And the <strong>TWO</strong> shall <strong>BE</strong>come <strong>ONE</strong>...”
-		</blockquote>
-		<cite class="mt-2 block text-sm text-neutral">Genesis 2:24</cite>
-	</section>
-
 	<section id="problem-statement">
 		<h3>Been there, done that</h3>
 		<div class="text-justify">
@@ -34,6 +27,13 @@
 				every which way we can, starting with this matchmaking issue…
 			</p>
 		</div>
+	</section>
+
+	<section id="hero-animation" class="text-center italic">
+		<blockquote class="text-2xl font-semibold text-primary">
+			“...And the <strong>TWO</strong> shall <strong>BE</strong>come <strong>ONE</strong>...”
+		</blockquote>
+		<cite class="mt-2 block text-sm text-neutral">Genesis 2:24</cite>
 	</section>
 
 	<section id="assurance">
