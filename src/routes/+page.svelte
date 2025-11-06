@@ -3,7 +3,7 @@
 	import { homePageNavlinks } from '$lib/data/layout/navbar';
 </script>
 
-<Navbar navLinks={homePageNavlinks}></Navbar>
+<Navbar navLinks={homePageNavlinks} showGoToApp={true}></Navbar>
 <main class="container-width mx-auto prose p-5">
 	<h1 class="text-center">TWOBEONE</h1>
 

@@ -4,7 +4,7 @@
 	import { Minus, Plus } from '@lucide/svelte';
 	import { Logo } from '$lib/components';
 
-	let { navLinks }: { navLinks: TNavLink[] } = $props();
+	let { navLinks, showGoToApp = false }: { navLinks: TNavLink[]; showGoToApp?: boolean } = $props();
 
 	let activeSubMenuId: string | null = $state(null);
 
@@ -14,8 +14,11 @@
 	let showHamburgerIcon = $derived(openDrawer);
 </script>
 
-<header class="relative flex min-h-[60px] w-full items-center bg-base-100 px-2.5 shadow-sm">
-	<a href="/" aria-label="AMI" class="absolute z-[1] w-14 lg:w-20">
+<header class="relative flex min-h-[60px] w-full items-center gap-5 bg-base-100 px-2.5 shadow-sm">
+	<!-- <a href="/" aria-label="AMI" class="absolute z-[1] w-14 lg:w-20">
+		<Logo></Logo>
+	</a> -->
+	<a href="/" aria-label="AMI">
 		<Logo></Logo>
 	</a>
 	<div class="container-width mx-auto hidden w-full items-center lg:flex">
@@ -23,6 +26,10 @@
 			{@render desktopNavLink(navLink)}
 		{/each}
 	</div>
+
+	{#if showGoToApp}
+		<a href="/matrimony/home" class="btn hidden btn-primary lg:flex">Go to App</a>
+	{/if}
 
 	<div class="drawer justify-end lg:hidden">
 		<input
