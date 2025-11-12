@@ -4,6 +4,7 @@
 	import { zod4 } from 'sveltekit-superforms/adapters';
 	import { SCommonRegistration } from '$lib/schemas';
 	import { commonRegistrationFormFields } from './data';
+	import { goto } from '$app/navigation';
 
 	let { data } = $props();
 
@@ -16,6 +17,18 @@
 	<h1 class="text-center">Create your account</h1>
 
 	<form method="POST" class="mx-auto flex max-w-md flex-col gap-5" use:enhance>
+		<!-- <form
+		method="POST"
+		class="mx-auto flex max-w-md flex-col gap-5"
+		use:enhance={{
+			onResult: ({ result }) => {
+				if (result.type == 'success') {
+					setTimeout(() => goto('/matrimony/home'));
+					console.log('here');
+				}
+			}
+		}}
+	> -->
 		{#each commonRegistrationFormFields as field, i (i)}
 			<FormField
 				label={field.label}

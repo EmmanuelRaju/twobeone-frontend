@@ -1,6 +1,7 @@
 //form
 export { default as Logo } from './common/Logo.svelte';
 export { default as ProfileCard } from './common/ProfileCard.svelte';
+export { default as Toast } from './common/Toast.svelte';
 
 //form
 export { default as FormErrorText } from './form/FormErrorText.svelte';

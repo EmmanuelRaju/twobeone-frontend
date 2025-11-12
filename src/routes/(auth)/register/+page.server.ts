@@ -1,28 +1,62 @@
+// routes/(auth)/register/+page.server.ts
+import { registerUser } from '$lib/server/models/UserModel.js';
+import { findUserById } from '$lib/server/models/UserModel.js';
+import { lucia } from '$lib/server/lucia/lucia.js';
+import { fail, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { fail, redirect } from '@sveltejs/kit';
-import bcrypt from 'bcryptjs';
 import { SCommonRegistration } from '$lib/schemas';
 
-export const load = async () => {
+export const load = async ({ locals }) => {
+	// Redirect if already logged in
+	if (locals.user) throw redirect(302, '/matrimony/home');
+
 	const form = await superValidate(zod4(SCommonRegistration));
 	return { form };
 };
 
 export const actions = {
-	default: async ({ request }) => {
+	default: async ({ request, cookies }) => {
 		const form = await superValidate(request, zod4(SCommonRegistration));
 		if (!form.valid) return fail(400, { form });
 
-		const { name, email, mobile, password } = form.data;
+		try {
+			// Create user
+			const userId = await registerUser({
+				name: form.data.name,
+				email: form.data.email,
+				mobile: form.data.mobile,
+				password: form.data.password
+			});
 
-		const userExists = false;
-		if (userExists) return fail(400, { form, message: 'Email already registered' });
+			// Verify user exists in database
+			const userFromDb = await findUserById(userId);
 
-		const hashedPassword = await bcrypt.hash(password, 10);
+			if (!userFromDb) {
+				throw new Error('User was created but could not be found in database');
+			}
 
-		console.log('New user registered:', { name, email, mobile, hashedPassword });
+			// Create session with Lucia - pass ObjectId as string for the adapter
+			const userIdString = userId;
+			const session = await lucia.createSession(userIdString, {});
+			const sessionCookie = lucia.createSessionCookie(session.id);
 
-		throw redirect(303, '/welcome');
+			cookies.set(sessionCookie.name, sessionCookie.value, {
+				path: '/',
+				...sessionCookie.attributes
+			});
+
+			throw redirect(303, '/matrimony/home');
+		} catch (error) {
+			// Re-throw SvelteKit errors (redirects, etc.)
+			if (error && typeof error === 'object' && 'status' in error) {
+				throw error;
+			}
+			console.error('Registration error:', error);
+			return fail(500, {
+				form,
+				message: error instanceof Error ? error.message : 'Registration failed'
+			});
+		}
 	}
 };

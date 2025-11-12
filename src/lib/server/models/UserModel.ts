@@ -7,7 +7,7 @@ import bcrypt from 'bcrypt';
 export interface User extends Document {
 	name: string;
 	email: string;
-	mobile?: string;
+	mobile: string;
 	passwordHash: string;
 	createdAt: Date;
 	updatedAt: Date;
@@ -30,6 +30,54 @@ const getCollection = async () => {
 const hashPassword = async (password: string): Promise<string> => {
 	const saltRounds = 10;
 	return bcrypt.hash(password, saltRounds);
+};
+
+// Register user with Lucia session
+export const registerUser = async (userData: {
+	name: string;
+	email: string;
+	mobile: string;
+	password: string;
+}) => {
+	const db = await getDb();
+	const users = db.collection<User>('users');
+
+	// Check existing
+	const existing = await users.findOne({ email: userData.email });
+	if (existing) throw new Error('Email already exists');
+
+	// Hash password
+	const passwordHash = await bcrypt.hash(userData.password, 10);
+
+	// Insert user
+	const result = await users.insertOne({
+		name: userData.name,
+		email: userData.email,
+		mobile: userData.mobile,
+		passwordHash,
+		emailVerified: false,
+		createdAt: new Date(),
+		updatedAt: new Date()
+	});
+
+	console.log('RESULT', result);
+
+	// Return the ObjectId directly, not as string
+	return result.insertedId;
+};
+
+// Login helper
+export const loginUser = async (email: string, password: string) => {
+	const db = await getDb();
+	const users = db.collection<User>('users');
+
+	const user = await users.findOne({ email });
+	if (!user) throw new Error('Invalid credentials');
+
+	const valid = await bcrypt.compare(password, user.passwordHash);
+	if (!valid) throw new Error('Invalid credentials');
+
+	return user._id;
 };
 
 // ✅ Create a new user

@@ -49,6 +49,9 @@
 		"zod": "^4.1.12"
 	},
 	"dependencies": {
+		"@lucia-auth/adapter-mongodb": "^1.0.3",
+		"axios": "^1.13.2",
+		"lucia": "^3.2.2",
 		"mongodb": "^6.20.0"
 	}
 }
