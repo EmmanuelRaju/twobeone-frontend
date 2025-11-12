@@ -1,6 +1,8 @@
 // src/hooks.server.ts
 import { lucia } from '$lib/server/lucia/lucia';
 import type { Handle } from '@sveltejs/kit';
+import { getDb } from '$lib/server/db';
+import { ObjectId } from 'mongodb';
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const sessionId = event.cookies.get(lucia.sessionCookieName);
@@ -28,7 +30,15 @@ export const handle: Handle = async ({ event, resolve }) => {
 			});
 			event.locals.user = JSON.parse(JSON.stringify(user));
 			event.locals.session = JSON.parse(JSON.stringify(session));
-			// console.log('Hook: Set locals with user:', user?.email);
+
+			//Em: For tracking last seen
+			const db = await getDb();
+			const now = new Date();
+			if (!user.lastSeen || now.getTime() - new Date(user.lastSeen).getTime() > 60_000) {
+				await db
+					.collection('users')
+					.updateOne({ _id: new ObjectId(user.id) }, { $set: { lastSeen: now } });
+			}
 		} else {
 			// console.log('Hook: No session found for ID:', sessionId);
 			const sessionCookie = lucia.createBlankSessionCookie();

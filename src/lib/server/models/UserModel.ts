@@ -1,7 +1,7 @@
 import type { Document, ObjectId } from 'mongodb';
 import { ObjectId as MongoObjectId } from 'mongodb';
 import { getDb } from '$lib/server/db';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 // 🧱 Type definition for a User document
 export interface User extends Document {
@@ -59,8 +59,6 @@ export const registerUser = async (userData: {
 		createdAt: new Date(),
 		updatedAt: new Date()
 	});
-
-	console.log('RESULT', result);
 
 	// Return the ObjectId directly, not as string
 	return result.insertedId;

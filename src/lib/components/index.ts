@@ -1,4 +1,5 @@
 //form
+export { default as CallToActionCard } from './common/CallToActionCard.svelte';
 export { default as Logo } from './common/Logo.svelte';
 export { default as ProfileCard } from './common/ProfileCard.svelte';
 export { default as Toast } from './common/Toast.svelte';

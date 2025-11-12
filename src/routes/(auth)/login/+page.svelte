@@ -25,10 +25,10 @@
 	});
 </script>
 
-<main class="container-width mx-auto prose p-5">
+<main class="prose p-2.5">
 	<h1 class="text-center">Login</h1>
 
-	<form method="POST" class="mx-auto flex max-w-md flex-col gap-5" use:enhance>
+	<form method="POST" class="mx-auto flex max-w-md min-w-2xs flex-col gap-5" use:enhance>
 		{#each emailLoginFormFields as field, i (i)}
 			<FormField
 				label={field.label}
@@ -41,5 +41,7 @@
 		<button class="btn mt-2 w-full btn-primary" type="submit">Login</button>
 
 		<a href="/forgot-password" class="btn btn-ghost">Forgot password?</a>
+
+		<a href="/register" class="btn btn-ghost">Don't have an account?</a>
 	</form>
 </main>

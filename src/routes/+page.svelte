@@ -1,6 +1,24 @@
 <script>
-	import { Footer, Navbar } from '$lib/components';
+	import { CallToActionCard, Footer, Navbar } from '$lib/components';
 	import { homePageNavlinks } from '$lib/data/layout/navbar';
+
+	let callToAction = [
+		{
+			title: 'Looking for a match?',
+			label: 'Create your profile',
+			href: '/matrimony/home'
+		},
+		{
+			title: 'Know someone who is?',
+			label: 'Refer a friend in need',
+			href: '/coming-soon'
+		},
+		{
+			title: 'Want to do things right?',
+			label: 'Explore godly guidance',
+			href: '/coming-soon'
+		}
+	];
 </script>
 
 <Navbar navLinks={homePageNavlinks} showGoToApp={true}></Navbar>
@@ -56,30 +74,12 @@
 		</div>
 	</section>
 
-	{#snippet callToActionCard(/** @type {{ title: any; btn: any; }} */ props)}
-		<div
-			class="col-span-full flex w-full flex-col gap-5 rounded-box bg-base-200 p-5 shadow-md transition duration-200 hover:shadow-lg sm:col-span-1"
-		>
-			<h4 class="text-center leading-none">{props.title}</h4>
-			<button class="btn btn-primary">{props.btn.label}</button>
-		</div>
-	{/snippet}
-
 	<section id="call-to-action">
 		<h3>Let us begin</h3>
 		<div class="grid grid-cols-3 gap-5">
-			{@render callToActionCard({
-				title: 'Looking for a match?',
-				btn: { label: 'Create your profile' }
-			})}
-			{@render callToActionCard({
-				title: 'Know someone who is?',
-				btn: { label: 'Refer a friend in need' }
-			})}
-			{@render callToActionCard({
-				title: 'Want to do things right?',
-				btn: { label: 'Explore godly guidance' }
-			})}
+			{#each callToAction as item, i (i)}
+				<CallToActionCard {...item}></CallToActionCard>
+			{/each}
 		</div>
 	</section>
 </main>

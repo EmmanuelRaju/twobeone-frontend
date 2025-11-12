@@ -1,5 +1,5 @@
 // lib/server/auth.ts
-import { Lucia } from 'lucia';
+import { Lucia, TimeSpan } from 'lucia';
 import { MongodbAdapter } from '@lucia-auth/adapter-mongodb';
 import { getDb } from '../db';
 import type { ObjectId } from 'mongodb';
@@ -16,11 +16,13 @@ export const lucia = new Lucia(adapter, {
 			secure: false // HTTPS only in production
 		}
 	},
+	sessionExpiresIn: new TimeSpan(30, 'd'),
 	getUserAttributes: (attributes) => {
 		return {
 			email: attributes.email,
 			name: attributes.name,
-			mobile: attributes.mobile
+			mobile: attributes.mobile,
+			lastSeen: attributes.lastSeen
 		};
 	}
 });
@@ -32,6 +34,7 @@ declare module 'lucia' {
 			email: string;
 			name: string;
 			mobile?: string;
+			lastSeen?: Date;
 		};
 		UserId: ObjectId;
 	}
