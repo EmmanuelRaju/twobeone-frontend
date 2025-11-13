@@ -9,7 +9,7 @@ import { SCommonRegistration } from '$lib/schemas';
 
 export const load = async ({ locals }) => {
 	// Redirect if already logged in
-	if (locals.user) throw redirect(302, '/matrimony/home');
+	if (locals.user) throw redirect(302, '/home');
 
 	const form = await superValidate(zod4(SCommonRegistration));
 	return { form };
@@ -46,7 +46,7 @@ export const actions = {
 				...sessionCookie.attributes
 			});
 
-			throw redirect(303, '/matrimony/home');
+			throw redirect(303, '/home');
 		} catch (error) {
 			// Re-throw SvelteKit errors (redirects, etc.)
 			if (error && typeof error === 'object' && 'status' in error) {

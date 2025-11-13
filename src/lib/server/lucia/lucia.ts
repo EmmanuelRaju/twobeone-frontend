@@ -3,8 +3,7 @@ import { Lucia, TimeSpan } from 'lucia';
 import { MongodbAdapter } from '@lucia-auth/adapter-mongodb';
 import { getDb } from '../db';
 import type { ObjectId } from 'mongodb';
-// import { dev } from '$app/environment';
-// import { PUBLIC_NODE_ENV } from '$env/static/public';
+import { dev } from '$app/environment';
 
 const db = await getDb();
 
@@ -13,7 +12,7 @@ const adapter = new MongodbAdapter(db.collection('sessions'), db.collection('use
 export const lucia = new Lucia(adapter, {
 	sessionCookie: {
 		attributes: {
-			secure: false // HTTPS only in production
+			secure: !dev // HTTPS only in production
 		}
 	},
 	sessionExpiresIn: new TimeSpan(30, 'd'),

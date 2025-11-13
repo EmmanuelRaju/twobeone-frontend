@@ -7,7 +7,7 @@ import { zod4 } from 'sveltekit-superforms/adapters';
 import { SEmailLogin } from '$lib/schemas';
 
 export const load = async ({ locals }) => {
-	if (locals.user) throw redirect(302, '/matrimony/home');
+	if (locals.user) throw redirect(302, '/home');
 
 	const form = await superValidate(zod4(SEmailLogin));
 	return { form };
@@ -18,7 +18,7 @@ export const actions = {
 		const form = await superValidate(request, zod4(SEmailLogin));
 		if (!form.valid) return fail(400, { form });
 
-		const redirectTo = url.searchParams.get('redirectTo') || '/matrimony/home';
+		const redirectTo = url.searchParams.get('redirectTo') || '/home';
 
 		try {
 			const userId = await loginUser(form.data.email, form.data.password);
