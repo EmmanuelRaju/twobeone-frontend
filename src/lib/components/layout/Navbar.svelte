@@ -4,7 +4,11 @@
 	import { Minus, Plus } from '@lucide/svelte';
 	import { Logo } from '$lib/components';
 
-	let { navLinks, showGoToApp = false }: { navLinks: TNavLink[]; showGoToApp?: boolean } = $props();
+	let {
+		navLinks,
+		showGoToApp = false,
+		classes = ''
+	}: { navLinks: TNavLink[]; showGoToApp?: boolean; classes?: string } = $props();
 
 	let activeSubMenuId: string | null = $state(null);
 
@@ -14,7 +18,9 @@
 	let showHamburgerIcon = $derived(openDrawer);
 </script>
 
-<header class="relative flex min-h-[60px] w-full items-center gap-5 bg-base-100 px-2.5 shadow-sm">
+<header
+	class="relative flex min-h-[60px] w-full items-center gap-5 bg-base-100 px-2.5 shadow-sm {classes}"
+>
 	<!-- <a href="/" aria-label="AMI" class="absolute z-[1] w-14 lg:w-20">
 		<Logo></Logo>
 	</a> -->

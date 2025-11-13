@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Navbar } from '$lib/components';
+	import { appNavlinks } from '$lib/data/layout/navbar';
 
 	let { data } = $props();
 
@@ -19,7 +20,7 @@
 	];
 </script>
 
-<Navbar navLinks={[]}></Navbar>
+<Navbar navLinks={appNavlinks}></Navbar>
 
 <div class="grid h-[calc(100vh-60px)] place-content-center">
 	<main class="container-width mx-auto prose p-5 text-center">

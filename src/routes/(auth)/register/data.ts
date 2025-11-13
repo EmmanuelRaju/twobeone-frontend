@@ -21,7 +21,7 @@ export const commonRegistrationFormFields = [
 	},
 	{
 		label: 'Confirm Password',
-		name: 'confirm_password',
+		name: 'confirmPassword',
 		type: 'password'
 	}
 ];

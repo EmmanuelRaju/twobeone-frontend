@@ -20,3 +20,16 @@ export const homePageNavlinks: TNavLink[] = [
 		href: '/how-to-use'
 	}
 ];
+
+export const appNavlinks: TNavLink[] = [
+	{
+		id: 'home',
+		label: 'Home',
+		href: '/home'
+	},
+	{
+		id: 'how-to-use',
+		label: 'How to use',
+		href: '/how-to-use'
+	}
+];
