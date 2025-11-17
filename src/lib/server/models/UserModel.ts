@@ -39,8 +39,7 @@ export const registerUser = async (userData: {
 	mobile: string;
 	password: string;
 }) => {
-	const db = await getDb();
-	const users = db.collection<User>('users');
+	const users = await getCollection();
 
 	// Check existing
 	const existing = await users.findOne({ email: userData.email });
@@ -66,8 +65,7 @@ export const registerUser = async (userData: {
 
 // Login helper
 export const loginUser = async (email: string, password: string) => {
-	const db = await getDb();
-	const users = db.collection<User>('users');
+	const users = await getCollection();
 
 	const user = await users.findOne({ email });
 	if (!user) throw new Error('Invalid credentials');

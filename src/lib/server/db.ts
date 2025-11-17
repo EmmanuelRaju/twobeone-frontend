@@ -11,7 +11,9 @@ let client: MongoClient | null = null;
 let clientPromise: Promise<MongoClient>;
 
 if (!client) {
-	client = new MongoClient(uri);
+	client = new MongoClient(uri, {
+		maxPoolSize: 1 // Cloudflare Workers limitation
+	});
 	clientPromise = client.connect();
 }
 
