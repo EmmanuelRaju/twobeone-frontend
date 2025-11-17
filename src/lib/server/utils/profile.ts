@@ -1,0 +1,5 @@
+export function generatePublicId(): string {
+	// TBO1234567
+	const num = Math.floor(1000000 + Math.random() * 9000000);
+	return `TBO${num}`;
+}

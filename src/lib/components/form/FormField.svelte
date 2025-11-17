@@ -11,7 +11,8 @@
 		options = [],
 		mode = 'single',
 		rows = 5,
-		placeholder = ''
+		placeholder = '',
+		disabled = $bindable(false)
 	} = $props();
 
 	let _type = $state(type);
@@ -31,6 +32,7 @@
 		{name}
 		{options}
 		{placeholder}
+		{disabled}
 		multiple={mode === 'multi'}
 		bind:form
 		bind:errors
@@ -44,6 +46,7 @@
 			class="textarea-bordered textarea w-full"
 			bind:value={form[name]}
 			aria-invalid={errors[name] ? 'true' : undefined}
+			{disabled}
 		></textarea>
 		<FormErrorText>
 			{errors[name]}
@@ -60,6 +63,7 @@
 				class:pr-10={type === 'password'}
 				bind:value={form[name]}
 				aria-invalid={errors[name] ? 'true' : undefined}
+				{disabled}
 			/>
 			{#if type === 'password'}
 				<button

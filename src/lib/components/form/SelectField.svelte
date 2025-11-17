@@ -10,7 +10,8 @@
 		form = $bindable(),
 		errors = $bindable(),
 		multiple = false,
-		placeholder
+		placeholder,
+		disabled = $bindable(false)
 	} = $props();
 
 	// Format options for svelte-select
@@ -49,6 +50,7 @@
 					clearable
 					searchable
 					{placeholder}
+					{disabled}
 				/>
 			{/if}
 		{:else}
@@ -57,6 +59,7 @@
 				class="select-bordered select w-full"
 				bind:value={form[name]}
 				aria-invalid={errors[name] ? 'true' : undefined}
+				{disabled}
 			>
 				<!-- <option value="">{placeholder || `Select ${label}`}</option> -->
 				{#each options as option}

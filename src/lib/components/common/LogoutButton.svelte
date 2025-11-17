@@ -1,16 +1,18 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { toasts } from '$lib/stores/toast';
-	import axios from 'axios';
 
 	const logout = async () => {
 		try {
-			const response = await axios.post('/api/auth/logout');
-			if (response.data.success) {
-				toasts.addToast({ message: response.data.message, type: 'success' });
+			const response = await fetch('/api/auth/logout', {
+				method: 'POST'
+			});
+			const res = await response.json();
+			if (res.data.success) {
+				toasts.addToast({ message: res.data.message, type: 'success' });
 				await goto('/');
 			} else {
-				toasts.addToast({ message: response.data.message, type: 'error', autoClose: false });
+				toasts.addToast({ message: res.data.message, type: 'error', autoClose: false });
 			}
 		} catch (error) {
 			console.error(error);
