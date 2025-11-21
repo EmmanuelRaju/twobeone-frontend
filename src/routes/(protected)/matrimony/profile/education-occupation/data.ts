@@ -4,13 +4,15 @@ import type z from 'zod';
 
 type TEducationOccupationKey = keyof z.infer<typeof SEducationOccupation>;
 
-export const educationOccupationFormFields: {
+export type TEducationOccupationFormField = {
 	label: string;
 	name: TEducationOccupationKey;
 	type: string;
 	options?: string[] | { groupName: string; children: string[] }[];
 	mode?: 'multi';
-}[] = [
+};
+
+export const educationOccupationFormFields: TEducationOccupationFormField[] = [
 	{
 		label: 'Highest education',
 		name: 'highestEducation',

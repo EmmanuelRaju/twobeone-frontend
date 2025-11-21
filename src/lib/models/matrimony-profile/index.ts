@@ -1,3 +1,4 @@
+import type { TEducationOccupation } from '$lib/schemas';
 import type { ObjectId } from 'mongodb';
 
 export type TMatrimonyProfileState =
@@ -38,6 +39,7 @@ export interface IMatrimonyProfile {
 	state: TMatrimonyProfileState;
 
 	basicInformation?: IMatrimonyBasicProfile;
+	educationOccupation?: TEducationOccupation;
 
 	createdAt: Date;
 	updatedAt: Date;

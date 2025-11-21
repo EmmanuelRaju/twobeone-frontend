@@ -6,7 +6,9 @@ import type {
 	TMatrimonyProfileState
 } from '$lib/models';
 import { generatePublicId } from '$lib/server/utils/profile';
-import { SBasicProfile } from '$lib/schemas';
+import { SBasicProfile, SEducationOccupation, type TEducationOccupation } from '$lib/schemas';
+import { educationOccupationRules } from '$lib/rules/matrimony/education-occupation';
+import { cleanPayload } from '$lib/server/utils/conditional-cleaner';
 
 const COLLECTION = 'matrimony_profiles';
 
@@ -80,6 +82,49 @@ export async function updateBasicInformation(
 export function isBasicProfileComplete(data: IMatrimonyBasicProfile): boolean {
 	try {
 		SBasicProfile.parse(data);
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+// Update Basic Information
+export async function updateEducationOccupation(
+	userId: string | ObjectId,
+	payload: TEducationOccupation
+): Promise<IMatrimonyProfile> {
+	const collection = await getCollection();
+	const _id = typeof userId === 'string' ? new ObjectId(userId) : userId;
+
+	const profile = await getProfile(_id);
+	if (!profile) throw new Error('Profile not found');
+
+	const needsReverification = profile.state === 'verified';
+
+	const newState: TMatrimonyProfileState = needsReverification ? 'in-progress' : profile.state;
+
+	const cleaned = cleanPayload(payload, educationOccupationRules);
+
+	const result = await collection.findOneAndUpdate(
+		{ userId: _id },
+		{
+			$set: {
+				educationOccupation: cleaned,
+				state: newState,
+				updatedAt: new Date()
+			}
+		},
+		{ returnDocument: 'after' }
+	);
+
+	if (!result) throw new Error('Failed to education/occupation information');
+
+	return result;
+}
+
+export function isEducationOccupationComplete(data: TEducationOccupation): boolean {
+	try {
+		SEducationOccupation.parse(data);
 		return true;
 	} catch {
 		return false;

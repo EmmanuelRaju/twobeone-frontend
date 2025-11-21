@@ -27,7 +27,7 @@ export const actions = {
 			const out = await res.json();
 
 			if (!out.success) {
-				return fail(400, { form, message: out.error ?? 'Failed to save profile.' });
+				return fail(400, { form, message: out.error ?? 'Failed to save data.' });
 			}
 
 			return {

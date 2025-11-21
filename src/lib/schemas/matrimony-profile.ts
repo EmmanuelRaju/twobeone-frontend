@@ -27,11 +27,13 @@ export const SEducationOccupation = z.object({
 	college: z.string().min(2, 'Details required'),
 	educationInDetail: z.string().optional(),
 	employedIn: z.enum(DProfile.employmentSector),
-	employer: z.string().min(2, 'Details required'),
-	occupation: z.enum(flattenOptions(DProfile.occupation)),
+	employer: z.string().min(2, 'Details required').optional(),
+	occupation: z.enum(flattenOptions(DProfile.occupation)).optional(),
 	occupationInDetail: z.string().optional(),
 	annualIncome: z.enum(DProfile.annualIncome)
 });
+
+export type TEducationOccupation = z.infer<typeof SEducationOccupation>;
 
 export const SFamily = z.object({
 	familyValue: z.enum(DProfile.familyValues),
