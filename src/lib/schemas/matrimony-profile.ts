@@ -63,6 +63,8 @@ export const SInterests = z.object({
 	food: z.array(z.enum(DProfile.food))
 });
 
+export type TInterests = z.infer<typeof SInterests>;
+
 export const SLocation = z.object({
 	country: z.string().min(1, 'Country is required'),
 	state: z.string().min(1, 'State is required'),

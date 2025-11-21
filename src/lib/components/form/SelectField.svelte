@@ -22,9 +22,14 @@
 		}));
 	};
 
-	// Handle selection changes for multi-select
 	const handleMultiSelect = (selectedItems: Array<{ value: string }>) => {
 		form[name] = selectedItems ? selectedItems.map((item) => item.value) : [];
+	};
+
+	const handleClear = (clearedItems: { value: string } | Array<{ value: string }>) => {
+		Array.isArray(clearedItems)
+			? (form[name] = [])
+			: (form[name] = form[name].filter((it: string) => it !== clearedItems.value));
 	};
 
 	$effect(() => {
@@ -46,6 +51,7 @@
 						? form[name].map((val) => ({ value: val, label: val }))
 						: undefined}
 					on:change={({ detail }) => handleMultiSelect(detail)}
+					on:clear={({ detail }) => handleClear(detail)}
 					multiple
 					clearable
 					searchable
