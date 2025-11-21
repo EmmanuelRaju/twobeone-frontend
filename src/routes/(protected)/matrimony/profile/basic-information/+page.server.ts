@@ -8,7 +8,13 @@ export const load = async ({ locals }) => {
 	const userId = locals.user!.id;
 	const profile = await getProfile(userId);
 
-	const form = await superValidate(profile?.basicInformation ?? {}, zod4(SBasicProfile));
+	let form;
+
+	if (profile?.basicInformation) {
+		form = await superValidate(profile.basicInformation, zod4(SBasicProfile));
+	} else {
+		form = await superValidate(zod4(SBasicProfile));
+	}
 
 	return { form, verified: profile?.state === 'verified', profileState: profile?.state };
 };
@@ -33,7 +39,8 @@ export const actions = {
 			return {
 				form,
 				message: out.message,
-				success: out.success
+				success: out.success,
+				posted: true
 			};
 		} catch (error) {
 			console.error('Error in basic information', error);

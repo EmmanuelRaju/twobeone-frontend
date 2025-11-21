@@ -13,6 +13,7 @@
 		multipleSubmits: 'abort',
 		validators: zod4(SBasicProfile),
 		dataType: 'json',
+		resetForm: false,
 		onResult: ({ result }) => {
 			if (result.type === 'success' && result.data) {
 				toasts.addToast({

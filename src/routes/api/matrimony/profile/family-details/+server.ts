@@ -1,10 +1,6 @@
 import { type RequestHandler } from '@sveltejs/kit';
-import {
-	updateBasicInformation,
-	getProfile,
-	createProfile
-} from '$lib/server/services/matrimony/profile';
-import { SBasicProfile, type TBasicProfile } from '$lib/schemas';
+import { updateFamilyInformation } from '$lib/server/services/matrimony/profile';
+import { SFamily, type TFamily } from '$lib/schemas';
 import { apiResponse } from '$lib/server/utils/response';
 import { z } from 'zod';
 
@@ -14,14 +10,11 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 	const userId = locals.user.id;
 	const body = await request.json();
 
-	const parsed = SBasicProfile.safeParse(body);
+	const parsed = SFamily.safeParse(body);
 
 	if (!parsed.success) return apiResponse.fail('Invalid data', 400, z.prettifyError(parsed.error));
 
-	let profile = await getProfile(userId);
-	if (!profile) profile = await createProfile(userId);
-
-	const updated = await updateBasicInformation(userId, parsed.data as TBasicProfile);
+	const updated = await updateFamilyInformation(userId, parsed.data as TFamily);
 
 	return apiResponse.success('Data updated successfully', updated);
 };

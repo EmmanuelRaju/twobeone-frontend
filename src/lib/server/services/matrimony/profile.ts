@@ -1,14 +1,12 @@
 import { getDb } from '$lib/server/db';
 import { ObjectId } from 'mongodb';
-import type {
-	IMatrimonyProfile,
-	IMatrimonyBasicProfile,
-	TMatrimonyProfileState
-} from '$lib/models';
+import type { IMatrimonyProfile, TMatrimonyProfileState } from '$lib/models';
 import { generatePublicId } from '$lib/server/utils/profile';
-import { SBasicProfile, SEducationOccupation, type TEducationOccupation } from '$lib/schemas';
+import { SBasicProfile, SEducationOccupation, SFamily } from '$lib/schemas';
+import type { TEducationOccupation, TBasicProfile, TFamily } from '$lib/schemas';
 import { educationOccupationRules } from '$lib/rules/matrimony/education-occupation';
 import { cleanPayload } from '$lib/server/utils/conditional-cleaner';
+// import { familyRules } from '$lib/rules/matrimony/family';
 
 const COLLECTION = 'matrimony_profiles';
 
@@ -47,10 +45,9 @@ export async function createProfile(userId: string | ObjectId): Promise<IMatrimo
 	return { ...profile, _id: result.insertedId } as IMatrimonyProfile;
 }
 
-// Update Basic Information
 export async function updateBasicInformation(
 	userId: string | ObjectId,
-	payload: IMatrimonyBasicProfile
+	payload: TBasicProfile
 ): Promise<IMatrimonyProfile> {
 	const collection = await getCollection();
 	const _id = typeof userId === 'string' ? new ObjectId(userId) : userId;
@@ -79,7 +76,7 @@ export async function updateBasicInformation(
 	return result;
 }
 
-export function isBasicProfileComplete(data: IMatrimonyBasicProfile): boolean {
+export function isBasicProfileComplete(data: TBasicProfile): boolean {
 	try {
 		SBasicProfile.parse(data);
 		return true;
@@ -88,7 +85,6 @@ export function isBasicProfileComplete(data: IMatrimonyBasicProfile): boolean {
 	}
 }
 
-// Update Basic Information
 export async function updateEducationOccupation(
 	userId: string | ObjectId,
 	payload: TEducationOccupation
@@ -125,6 +121,48 @@ export async function updateEducationOccupation(
 export function isEducationOccupationComplete(data: TEducationOccupation): boolean {
 	try {
 		SEducationOccupation.parse(data);
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+export async function updateFamilyInformation(
+	userId: string | ObjectId,
+	payload: TFamily
+): Promise<IMatrimonyProfile> {
+	const collection = await getCollection();
+	const _id = typeof userId === 'string' ? new ObjectId(userId) : userId;
+
+	const profile = await getProfile(_id);
+	if (!profile) throw new Error('Profile not found');
+
+	const needsReverification = profile.state === 'verified';
+
+	const newState: TMatrimonyProfileState = needsReverification ? 'in-progress' : profile.state;
+
+	// const cleaned = cleanPayload(payload, familyRules);
+
+	const result = await collection.findOneAndUpdate(
+		{ userId: _id },
+		{
+			$set: {
+				family: payload,
+				state: newState,
+				updatedAt: new Date()
+			}
+		},
+		{ returnDocument: 'after' }
+	);
+
+	if (!result) throw new Error('Failed to update family information');
+
+	return result;
+}
+
+export function isFamilyComplete(data: TFamily): boolean {
+	try {
+		SFamily.parse(data);
 		return true;
 	} catch {
 		return false;

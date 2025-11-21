@@ -2,16 +2,14 @@ import {
 	familyStatus,
 	familyType,
 	familyValues,
-	religiousValues
+	religiousValues,
+	parentsMaritalStatus
 } from '$lib/data/matrimony-profile';
-import { SFamily } from '$lib/schemas';
-import type z from 'zod';
-
-type TFamilyKey = keyof z.infer<typeof SFamily>;
+import { type TFamily } from '$lib/schemas';
 
 export const familyFormFields: {
 	label: string;
-	name: TFamilyKey;
+	name: keyof TFamily;
 	type: string;
 	options?: string[];
 	mode?: 'multi';
@@ -24,7 +22,7 @@ export const familyFormFields: {
 	},
 	{
 		label: 'Family type',
-		name: 'familytype',
+		name: 'familyType',
 		type: 'select',
 		options: familyType
 	},
@@ -46,8 +44,24 @@ export const familyFormFields: {
 		options: religiousValues
 	},
 	{
+		label: "Parent's marital status",
+		name: 'parentsMaritalStatus',
+		type: 'select',
+		options: parentsMaritalStatus
+	},
+	{
+		label: "Father's name",
+		name: 'fatherName',
+		type: 'text'
+	},
+	{
 		label: "Father's occupation",
 		name: 'fatherOccupation',
+		type: 'text'
+	},
+	{
+		label: "Mother's name",
+		name: 'motherName',
 		type: 'text'
 	},
 	{

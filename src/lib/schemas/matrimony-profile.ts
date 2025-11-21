@@ -22,6 +22,8 @@ export const SBasicProfile = z.object({
 	aboutMe: z.string()
 });
 
+export type TBasicProfile = z.infer<typeof SBasicProfile>;
+
 export const SEducationOccupation = z.object({
 	highestEducation: z.enum(flattenOptions(DProfile.education)),
 	college: z.string().min(2, 'Details required'),
@@ -37,16 +39,21 @@ export type TEducationOccupation = z.infer<typeof SEducationOccupation>;
 
 export const SFamily = z.object({
 	familyValue: z.enum(DProfile.familyValues),
-	familytype: z.enum(DProfile.familyType),
+	familyType: z.enum(DProfile.familyType),
 	familyStatus: z.enum(DProfile.familyStatus),
 	nativePlace: z.string().min(2, 'Place required'),
 	religiousValues: z.enum(DProfile.religiousValues),
+	parentsMaritalStatus: z.enum(DProfile.parentsMaritalStatus),
+	fatherName: z.string().optional(),
 	fatherOccupation: z.string().optional(),
+	motherName: z.string().optional(),
 	motherOccupation: z.string().optional(),
 	brothersCount: z.number(),
 	sistersCount: z.number(),
 	aboutFamily: z.string().optional()
 });
+
+export type TFamily = z.infer<typeof SFamily>;
 
 export const SInterests = z.object({
 	hobbies: z.array(z.enum(DProfile.hobbies)),

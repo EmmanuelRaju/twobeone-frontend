@@ -1,6 +1,24 @@
-export const familyValues = ['Orthodox', 'Traditional', 'Moderate', 'Liberal'];
+export const familyValues = [
+	'Orthodox',
+	'Traditional',
+	'Moderate',
+	'Liberal',
+	'Spiritual but not religious',
+	'Agnostic',
+	'Atheist',
+	'Multi-faith household',
+	'Interfaith family'
+];
 
-export const familyType = ['Joint family', 'Nuclear family'];
+export const familyType = [
+	'Joint family',
+	'Nuclear family',
+	'Orphan',
+	'Father expired',
+	'Mother expired',
+	'Single parent family (by choice)',
+	'Blended family (remarried parents)'
+];
 
 export const familyStatus = [
 	'Lower class',
@@ -17,4 +35,11 @@ export const religiousValues = [
 	'Average Christian',
 	'Not religious',
 	'Not given it a thought'
+];
+
+export const parentsMaritalStatus = [
+	'Parents together',
+	'Parents divorced',
+	'Parents separated',
+	'Single parent by choice'
 ];

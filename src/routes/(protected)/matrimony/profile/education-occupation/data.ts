@@ -1,12 +1,9 @@
 import { annualIncome, education, employmentSector, occupation } from '$lib/data/matrimony-profile';
-import { SEducationOccupation } from '$lib/schemas';
-import type z from 'zod';
-
-type TEducationOccupationKey = keyof z.infer<typeof SEducationOccupation>;
+import type { TEducationOccupation } from '$lib/schemas';
 
 export type TEducationOccupationFormField = {
 	label: string;
-	name: TEducationOccupationKey;
+	name: keyof TEducationOccupation;
 	type: string;
 	options?: string[] | { groupName: string; children: string[] }[];
 	mode?: 'multi';

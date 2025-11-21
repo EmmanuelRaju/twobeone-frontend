@@ -11,14 +11,11 @@ import {
 	profileCreatedBy,
 	smokingHabits
 } from '$lib/data/matrimony-profile';
-import { SBasicProfile } from '$lib/schemas';
-import type z from 'zod';
-
-type TBasicProfileKey = keyof z.infer<typeof SBasicProfile>;
+import { type TBasicProfile } from '$lib/schemas';
 
 export const basicProfileFormFields: {
 	label: string;
-	name: TBasicProfileKey;
+	name: keyof TBasicProfile;
 	type: string;
 	options?: string[];
 	mode?: 'multi';
