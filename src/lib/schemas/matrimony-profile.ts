@@ -105,3 +105,9 @@ export const SContact = z.object({
 });
 
 export type TContact = z.infer<typeof SContact>;
+
+export type TProfileImages = {
+	profile?: string;
+	gallery: string[];
+	updatedAt: Date;
+};
