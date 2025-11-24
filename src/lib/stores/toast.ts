@@ -17,6 +17,10 @@ function createToastStore() {
 		const id = Date.now();
 		const newToast: TToast = { id, duration: 3000, autoClose: true, ...toast };
 
+		if (newToast.type === 'error' && !newToast.message) {
+			newToast.message = 'Something went wrong! Please try later.';
+		}
+
 		update((toasts) => [newToast, ...toasts]);
 
 		if (newToast.autoClose) {

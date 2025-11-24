@@ -3,7 +3,8 @@ import type {
 	TBasicProfile,
 	TFamily,
 	TInterests,
-	TLocation
+	TLocation,
+	TContact
 } from '$lib/schemas';
 import type { ObjectId } from 'mongodb';
 
@@ -29,6 +30,7 @@ export interface IMatrimonyProfile {
 	family?: TFamily;
 	interests?: TInterests;
 	location?: TLocation;
+	contact?: TContact;
 
 	createdAt: Date;
 	updatedAt: Date;

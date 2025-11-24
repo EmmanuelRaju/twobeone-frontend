@@ -77,8 +77,31 @@ export type TLocation = z.infer<typeof SLocation>;
 export const SContact = z.object({
 	email: z.email('Enter a valid email'),
 	mobile: z.string().regex(/^[0-9]{10}$/, 'Enter a valid 10-digit mobile number'),
-	whatsapp: z.string().regex(/^[0-9]{10}$/, 'Enter a valid 10-digit mobile number'),
-	instagram: z.url({ hostname: /^instagram\.com$/ }),
-	linkedin: z.url({ hostname: /^linkedin\.com$/ }),
-	x: z.url({ hostname: /^x\.com$/ })
+	whatsapp: z
+		.string()
+		.refine((val) => val === '' || /^[0-9]{10}$/.test(val), 'Enter a valid 10-digit mobile number')
+		.optional(),
+	instagram: z
+		.string()
+		.refine(
+			(val) => val === '' || z.url({ hostname: /^instagram\.com$/ }).safeParse(val).success,
+			'Enter a valid Instagram URL'
+		)
+		.optional(),
+	linkedin: z
+		.string()
+		.refine(
+			(val) => val === '' || z.url({ hostname: /^linkedin\.com$/ }).safeParse(val).success,
+			'Enter a valid LinkedIn URL'
+		)
+		.optional(),
+	x: z
+		.string()
+		.refine(
+			(val) => val === '' || z.url({ hostname: /^x\.com$/ }).safeParse(val).success,
+			'Enter a valid X URL'
+		)
+		.optional()
 });
+
+export type TContact = z.infer<typeof SContact>;
