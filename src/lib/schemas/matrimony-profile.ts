@@ -72,6 +72,8 @@ export const SLocation = z.object({
 	citizenship: z.string().min(1, 'Citizenship is required')
 });
 
+export type TLocation = z.infer<typeof SLocation>;
+
 export const SContact = z.object({
 	email: z.email('Enter a valid email'),
 	mobile: z.string().regex(/^[0-9]{10}$/, 'Enter a valid 10-digit mobile number'),

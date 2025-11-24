@@ -2,8 +2,14 @@ import { getDb } from '$lib/server/db';
 import { ObjectId } from 'mongodb';
 import type { IMatrimonyProfile, TMatrimonyProfileState } from '$lib/models';
 import { generatePublicId } from '$lib/server/utils/profile';
-import { SBasicProfile, SEducationOccupation, SFamily, SInterests } from '$lib/schemas';
-import type { TEducationOccupation, TBasicProfile, TFamily, TInterests } from '$lib/schemas';
+import { SBasicProfile, SEducationOccupation, SFamily, SInterests, SLocation } from '$lib/schemas';
+import type {
+	TEducationOccupation,
+	TBasicProfile,
+	TFamily,
+	TInterests,
+	TLocation
+} from '$lib/schemas';
 import { educationOccupationRules } from '$lib/rules/matrimony/education-occupation';
 import { cleanPayload } from '$lib/server/utils/conditional-cleaner';
 // import { familyRules } from '$lib/rules/matrimony/family';
@@ -203,6 +209,46 @@ export async function updateInterests(
 export function isInterestsComplete(data: TInterests): boolean {
 	try {
 		SInterests.parse(data);
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+export async function updateLocation(
+	userId: string | ObjectId,
+	payload: TLocation
+): Promise<IMatrimonyProfile> {
+	const collection = await getCollection();
+	const _id = typeof userId === 'string' ? new ObjectId(userId) : userId;
+
+	const profile = await getProfile(_id);
+	if (!profile) throw new Error('Profile not found');
+
+	const needsReverification = profile.state === 'verified';
+
+	const newState: TMatrimonyProfileState = needsReverification ? 'in-progress' : profile.state;
+
+	const result = await collection.findOneAndUpdate(
+		{ userId: _id },
+		{
+			$set: {
+				location: payload,
+				state: newState,
+				updatedAt: new Date()
+			}
+		},
+		{ returnDocument: 'after' }
+	);
+
+	if (!result) throw new Error('Failed to update location information');
+
+	return result;
+}
+
+export function isLocationComplete(data: TLocation): boolean {
+	try {
+		SLocation.parse(data);
 		return true;
 	} catch {
 		return false;
