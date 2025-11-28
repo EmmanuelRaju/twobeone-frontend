@@ -3,8 +3,12 @@ import { lucia } from '$lib/server/lucia/lucia';
 import type { Handle } from '@sveltejs/kit';
 import { getDb } from '$lib/server/db';
 import { ObjectId } from 'mongodb';
+import { building } from '$app/environment';
 
 export const handle: Handle = async ({ event, resolve }) => {
+	if (building) {
+		return resolve(event);
+	}
 	const sessionId = event.cookies.get(lucia.sessionCookieName);
 
 	if (!sessionId) {

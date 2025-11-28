@@ -30,8 +30,8 @@ const getCollection = async () => {
 	const collection = db.collection<IMatrimonyProfile>(COLLECTION);
 
 	// Ensure indexes
-	await collection.createIndex({ userId: 1 });
-	await collection.createIndex({ publicId: 1 }, { unique: true });
+	// await collection.createIndex({ userId: 1 });
+	// await collection.createIndex({ publicId: 1 }, { unique: true });
 	return collection;
 };
 
