@@ -22,7 +22,7 @@ const getCollection = async () => {
 	const collection = db.collection<User>(collectionName);
 
 	// Ensure index only once
-	await collection.createIndex({ email: 1 }, { unique: true });
+	// await collection.createIndex({ email: 1 }, { unique: true });
 	return collection;
 };
 

@@ -1,11 +1,13 @@
 // routes/(auth)/logout/+server.ts
-import { lucia } from '$lib/server/lucia/lucia.js';
+import { getLucia } from '$lib/server/lucia/lucia.js';
 import { apiResponse } from '$lib/server/utils/response.js';
 
 export const POST = async ({ locals, cookies }) => {
 	if (!locals.session) {
 		return apiResponse.success('Logout successful');
 	}
+
+	const lucia = await getLucia();
 
 	await lucia.invalidateSession(locals.session.id);
 	const sessionCookie = lucia.createBlankSessionCookie();

@@ -20,8 +20,6 @@ jobs:
           node-version: 22.19.0
       - name: Build
         env:
-          MONGODB_URI: ${{secrets.MONGODB_URI}}
-          MONGODB_DB_NAME: ${{secrets.MONGODB_DB_NAME}}
           PUBLIC_MODE: PROD
           CLOUDFLARE_ACCOUNT_ID: ${{secrets.CLOUDFLARE_ACCOUNT_ID}}
           CLOUDFLARE_IMAGES_API_TOKEN: ${{secrets.CLOUDFLARE_IMAGES_API_TOKEN}}

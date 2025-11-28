@@ -1,7 +1,7 @@
 // routes/(auth)/register/+page.server.ts
 import { registerUser } from '$lib/server/models/UserModel.js';
 import { findUserById } from '$lib/server/models/UserModel.js';
-import { lucia } from '$lib/server/lucia/lucia.js';
+import { getLucia } from '$lib/server/lucia/lucia.js';
 import { fail, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import { zod4 } from 'sveltekit-superforms/adapters';
@@ -38,6 +38,7 @@ export const actions = {
 
 			// Create session with Lucia - pass ObjectId as string for the adapter
 			const userIdString = userId;
+			const lucia = await getLucia();
 			const session = await lucia.createSession(userIdString, {});
 			const sessionCookie = lucia.createSessionCookie(session.id);
 

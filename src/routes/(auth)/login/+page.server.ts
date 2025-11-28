@@ -1,6 +1,6 @@
 // routes/(auth)/login/+page.server.ts
 import { loginUser } from '$lib/server/models/UserModel.js';
-import { lucia } from '$lib/server/lucia/lucia.js';
+import { getLucia } from '$lib/server/lucia/lucia.js';
 import { fail, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import { zod4 } from 'sveltekit-superforms/adapters';
@@ -22,6 +22,7 @@ export const actions = {
 
 		try {
 			const userId = await loginUser(form.data.email, form.data.password);
+			const lucia = await getLucia();
 
 			const session = await lucia.createSession(userId, {});
 			const sessionCookie = lucia.createSessionCookie(session.id);
