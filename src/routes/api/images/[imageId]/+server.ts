@@ -1,10 +1,11 @@
 import { apiResponse } from '$lib/server/utils/response';
+import { CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_IMAGES_API_TOKEN } from '$env/static/private';
 
 export async function DELETE({ params }) {
 	const { imageId } = params;
 
-	const accountId = process.env.CLOUDFLARE_ACCOUNT_ID!;
-	const apiToken = process.env.CLOUDFLARE_IMAGES_API_TOKEN!;
+	const accountId = CLOUDFLARE_ACCOUNT_ID!;
+	const apiToken = CLOUDFLARE_IMAGES_API_TOKEN!;
 
 	const res = await fetch(
 		`https://api.cloudflare.com/client/v4/accounts/${accountId}/images/v1/${imageId}`,
@@ -18,7 +19,7 @@ export async function DELETE({ params }) {
 
 	if (!data.success) {
 		return apiResponse.fail(
-			data.errors?.[0]?.message || 'Failed to delete image',
+			'Failed to delete image',
 			400,
 			data.errors?.[0]?.message || 'Failed to delete image'
 		);

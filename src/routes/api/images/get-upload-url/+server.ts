@@ -1,8 +1,9 @@
+import { CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_IMAGES_API_TOKEN } from '$env/static/private';
 import { apiResponse } from '$lib/server/utils/response';
 
 export async function POST() {
-	const accountId = process.env.CLOUDFLARE_ACCOUNT_ID!;
-	const apiToken = process.env.CLOUDFLARE_IMAGES_API_TOKEN!;
+	const accountId = CLOUDFLARE_ACCOUNT_ID!;
+	const apiToken = CLOUDFLARE_IMAGES_API_TOKEN!;
 
 	const res = await fetch(
 		`https://api.cloudflare.com/client/v4/accounts/${accountId}/images/v2/direct_upload`,
@@ -16,7 +17,7 @@ export async function POST() {
 
 	if (!data.success) {
 		return apiResponse.fail(
-			data.errors?.[0]?.message || 'Failed to create upload URL',
+			'Failed to create upload URL',
 			500,
 			data.errors?.[0]?.message || 'Failed to create upload URL'
 		);
