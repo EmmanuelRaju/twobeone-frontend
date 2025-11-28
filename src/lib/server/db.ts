@@ -1,12 +1,6 @@
 import { MongoClient } from 'mongodb';
 import { env } from '$env/dynamic/private';
 
-const uri = env.MONGODB_URI;
-const dbName = env.MONGODB_DB_NAME;
-
-if (!uri) throw new Error('Missing MONGODB_URI');
-if (!dbName) throw new Error('Missing MONGODB_DB_NAME');
-
 let client: MongoClient | null = null;
 // let clientPromise: Promise<MongoClient>;
 
@@ -25,6 +19,11 @@ let client: MongoClient | null = null;
 let connecting: Promise<MongoClient> | null = null;
 
 export async function getDb() {
+	const uri = env.MONGODB_URI;
+	const dbName = env.MONGODB_DB_NAME;
+
+	if (!uri) throw new Error('Missing MONGODB_URI');
+	if (!dbName) throw new Error('Missing MONGODB_DB_NAME');
 	// create client once
 	if (!client) {
 		client = new MongoClient(uri, {
