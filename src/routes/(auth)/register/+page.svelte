@@ -4,11 +4,30 @@
 	import { zod4 } from 'sveltekit-superforms/adapters';
 	import { SCommonRegistration } from '$lib/schemas';
 	import { commonRegistrationFormFields } from './data';
+	import { toasts } from '$lib/stores/toast';
 
 	let { data } = $props();
 
-	const { form, errors, enhance } = superForm(data.form, {
-		validators: zod4(SCommonRegistration)
+	const { form, errors, enhance, delayed } = superForm(data.form, {
+		delayMs: 0,
+		multipleSubmits: 'abort',
+		validators: zod4(SCommonRegistration),
+		dataType: 'json',
+		resetForm: false,
+		onResult: ({ result }) => {
+			console.log(result);
+			if (result.type === 'success' && result.data) {
+				toasts.addToast({
+					message: result.data.message,
+					type: 'success'
+				});
+			} else if (result.type === 'failure' && result.data) {
+				toasts.addToast({
+					message: result.data.message,
+					type: 'error'
+				});
+			}
+		}
 	});
 </script>
 
@@ -25,7 +44,12 @@
 				bind:errors={$errors}
 			/>
 		{/each}
-		<button class="btn mt-2 w-full btn-primary" type="submit">Register</button>
+		<button class="btn mt-2 w-full btn-primary" type="submit" disabled={$delayed}>
+			{#if $delayed}
+				<span class="loading loading-md loading-spinner"></span>
+			{/if}
+			Register
+		</button>
 
 		<a href="/login" class="btn btn-ghost">Have an account?</a>
 	</form>
