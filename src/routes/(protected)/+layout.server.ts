@@ -1,11 +1,9 @@
 import { redirect } from '@sveltejs/kit';
 
-export const load = async ({ locals, url }) => {
-	if (!locals.user) {
-		throw redirect(302, `/login?redirectTo=${url.pathname}`);
+export const load = async ({ url, locals: { safeGetSession } }) => {
+	const { session } = await safeGetSession();
+	if (!session) {
+		redirect(303, `/login?redirectTo=${url.pathname}`);
 	}
-
-	return {
-		user: locals.user
-	};
+	return { session };
 };

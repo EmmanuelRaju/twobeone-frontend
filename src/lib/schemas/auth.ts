@@ -13,6 +13,8 @@ export const SCommonRegistration = z
 		path: ['confirm_password']
 	});
 
+export type TCommonRegistration = z.infer<typeof SCommonRegistration>;
+
 export const SEmailLogin = z.object({
 	email: z.email('Enter a valid email'),
 	password: z.string().min(6, 'Password must be at least 6 characters')

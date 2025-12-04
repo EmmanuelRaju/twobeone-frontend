@@ -1,69 +1,38 @@
 // src/hooks.server.ts
-import { getLucia } from '$lib/server/lucia/lucia';
+import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_PUBLISHABLE_KEY } from '$env/static/public';
+import { createServerClient } from '@supabase/ssr';
 import type { Handle } from '@sveltejs/kit';
-import { getDb } from '$lib/server/db';
-import { ObjectId } from 'mongodb';
-import { building } from '$app/environment';
 
 export const handle: Handle = async ({ event, resolve }) => {
-	if (building) {
-		return resolve(event);
-	}
-	const lucia = await getLucia();
-	const sessionId = event.cookies.get(lucia.sessionCookieName);
-
-	if (!sessionId) {
-		event.locals.user = null;
-		event.locals.session = null;
-		return resolve(event);
-	}
-
-	try {
-		// console.log('Hook: Validating session with ID:', sessionId);
-		const response = await lucia.validateSession(sessionId);
-		const { session, user } = response;
-
-		// console.log('RESPONSE', response);
-
-		// console.log('Hook: Session validation result:', { session: session?.id, user: user?.email });
-
-		if (session) {
-			const sessionCookie = lucia.createSessionCookie(session.id);
-			event.cookies.set(sessionCookie.name, sessionCookie.value, {
-				path: '/',
-				...sessionCookie.attributes
-			});
-			event.locals.user = JSON.parse(JSON.stringify(user));
-			event.locals.session = JSON.parse(JSON.stringify(session));
-
-			//Em: For tracking last seen
-			const db = await getDb();
-			const now = new Date();
-			if (!user.lastSeen || now.getTime() - new Date(user.lastSeen).getTime() > 60_000) {
-				await db
-					.collection('users')
-					.updateOne({ _id: new ObjectId(user.id) }, { $set: { lastSeen: now } });
+	event.locals.supabase = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_PUBLISHABLE_KEY, {
+		cookies: {
+			getAll: () => event.cookies.getAll(),
+			setAll: (cookiesToSet) => {
+				cookiesToSet.forEach(({ name, value, options }) => {
+					event.cookies.set(name, value, { ...options, path: '/' });
+				});
 			}
-		} else {
-			// console.log('Hook: No session found for ID:', sessionId);
-			const sessionCookie = lucia.createBlankSessionCookie();
-			event.cookies.set(sessionCookie.name, sessionCookie.value, {
-				path: '/',
-				...sessionCookie.attributes
-			});
-			event.locals.user = null;
-			event.locals.session = null;
 		}
-	} catch (error) {
-		console.error('Hook: Error validating session:', error);
-		const sessionCookie = lucia.createBlankSessionCookie();
-		event.cookies.set(sessionCookie.name, sessionCookie.value, {
-			path: '/',
-			...sessionCookie.attributes
-		});
-		event.locals.user = null;
-		event.locals.session = null;
-	}
+	});
 
-	return resolve(event);
+	event.locals.safeGetSession = async () => {
+		const {
+			data: { user },
+			error
+		} = await event.locals.supabase.auth.getUser();
+		if (error) {
+			return { session: null, user: null };
+		}
+
+		const {
+			data: { session }
+		} = await event.locals.supabase.auth.getSession();
+		return { session, user };
+	};
+
+	return resolve(event, {
+		filterSerializedResponseHeaders(name: string) {
+			return name === 'content-range' || name === 'x-supabase-api-version';
+		}
+	});
 };

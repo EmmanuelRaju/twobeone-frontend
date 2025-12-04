@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { createUser } from '$lib/server/models/UserModel';
+import { createUser } from '$lib/server/services/user';
 import { SCommonRegistration } from '$lib/schemas';
 import { superValidate } from 'sveltekit-superforms/server';
 import { zod4 } from 'sveltekit-superforms/adapters';
