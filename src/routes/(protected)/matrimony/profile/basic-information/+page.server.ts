@@ -2,15 +2,26 @@ import { superValidate } from 'sveltekit-superforms/server';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { fail } from '@sveltejs/kit';
 import { SBasicProfile } from '$lib/schemas';
-import { getProfile } from '$lib/server/services/matrimony/profile';
+import {
+	getProfile,
+	updateBasicInformation,
+	createProfile,
+	isBasicProfileComplete
+} from '$lib/server/services/matrimony/profile';
 
-export const load = async ({ locals }) => {
-	const userId = locals.user!.id;
-	const profile = await getProfile(userId);
+export const load = async ({ locals: { safeGetSession } }) => {
+	const { user } = await safeGetSession();
+	const userId = user!.id;
+	let profile = await getProfile(userId);
+
+	// Ensure profile exists
+	if (!profile) {
+		profile = await createProfile(userId);
+	}
 
 	let form;
 
-	if (profile?.basicInformation) {
+	if (profile?.basicInformation && isBasicProfileComplete(profile.basicInformation)) {
 		form = await superValidate(profile.basicInformation, zod4(SBasicProfile));
 	} else {
 		form = await superValidate(zod4(SBasicProfile));
@@ -20,31 +31,28 @@ export const load = async ({ locals }) => {
 };
 
 export const actions = {
-	default: async ({ request, fetch }) => {
+	default: async ({ request, locals: { safeGetSession } }) => {
+		const { user } = await safeGetSession();
+		const userId = user!.id;
 		const form = await superValidate(request, zod4(SBasicProfile));
+
+		if (!form.valid) return fail(400, { form });
+
 		try {
-			if (!form.valid) return fail(400, { form });
+			// Ensure profile exists (just in case)
+			await createProfile(userId);
 
-			const res = await fetch('/api/matrimony/profile/basic-information', {
-				method: 'POST',
-				body: JSON.stringify(form.data)
-			});
-
-			const out = await res.json();
-
-			if (!out.success) {
-				return fail(400, { form, message: out.error ?? 'Failed to save data.' });
-			}
+			await updateBasicInformation(userId, form.data);
 
 			return {
 				form,
-				message: out.message,
-				success: out.success,
+				message: 'Profile updated successfully.',
+				success: true,
 				posted: true
 			};
 		} catch (error) {
 			console.error('Error in basic information', error);
-			return fail(400, { form, message: 'Something went wrong, try again later' });
+			return fail(500, { form, message: 'Something went wrong, try again later' });
 		}
 	}
 };

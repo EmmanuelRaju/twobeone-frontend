@@ -1,6 +1,9 @@
 <script lang="ts">
+	import {LogoutButton} from '$lib/components';
 	import { introCards } from './data';
 </script>
+
+<LogoutButton></LogoutButton>
 
 <main class="container-width mx-auto prose p-5">
 	{@render introCard(introCards['create'])}
@@ -22,9 +25,9 @@
 })}
 	<div class="card bg-base-200 card-border">
 		<div class="card-body">
-			<h2 class="!m-0 card-title">{props.title}</h2>
+			<h2 class="m-0! card-title">{props.title}</h2>
 			{#each props.desc as item, i (i)}
-				<p class="!m-0">
+				<p class="m-0!">
 					{item}
 				</p>
 			{/each}

@@ -8,11 +8,11 @@
 				method: 'POST'
 			});
 			const res = await response.json();
-			if (res.data.success) {
-				toasts.addToast({ message: res.data.message, type: 'success' });
+			if (res.success) {
+				toasts.addToast({ message: res.message, type: 'success' });
 				await goto('/');
 			} else {
-				toasts.addToast({ message: res.data.message, type: 'error', autoClose: false });
+				toasts.addToast({ message: res.message, type: 'error', autoClose: false });
 			}
 		} catch (error) {
 			console.error(error);

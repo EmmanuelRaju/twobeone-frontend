@@ -1,63 +1,73 @@
 // routes/(auth)/register/+page.server.ts
-import { registerUser } from '$lib/server/models/UserModel.js';
-import { findUserById } from '$lib/server/models/UserModel.js';
-import { getLucia } from '$lib/server/lucia/lucia.js';
 import { fail, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { SCommonRegistration } from '$lib/schemas';
+import { db } from '$lib/server/db/client';
+import { users } from '$lib/server/db/schema';
 
-export const load = async ({ locals }) => {
-	// Redirect if already logged in
-	if (locals.user) throw redirect(302, '/home');
+export const load = async ({ locals: { safeGetSession } }: { locals: App.Locals }) => {
+	const { session } = await safeGetSession();
+	if (session) {
+		redirect(303, `/home`);
+	}
 
 	const form = await superValidate(zod4(SCommonRegistration));
 	return { form };
 };
 
 export const actions = {
-	default: async ({ request, cookies }) => {
+	default: async ({ request, locals: { supabase } }: { request: Request; locals: App.Locals }) => {
 		const form = await superValidate(request, zod4(SCommonRegistration));
 		if (!form.valid) return fail(400, { form });
 
 		try {
-			// Create user
-			const userId = await registerUser({
-				name: form.data.name,
+			// 1. Sign up with Supabase Auth
+			const { data: authData, error: authError } = await supabase.auth.signUp({
 				email: form.data.email,
+				password: form.data.password,
+				options: {
+					data: {
+						name: form.data.name,
+						mobile: form.data.mobile
+					}
+				}
+			});
+
+			if (authError) {
+				console.error('Supabase Auth Error:', authError);
+				return fail(400, {
+					form,
+					message: authError.message
+				});
+			}
+
+			if (!authData.user) {
+				return fail(500, {
+					form,
+					message: 'Registration failed: No user returned'
+				});
+			}
+
+			// 2. Insert into public users table
+			await db.insert(users).values({
+				id: authData.user.id, // Use Supabase Auth ID
+				email: form.data.email,
+				name: form.data.name,
 				mobile: form.data.mobile,
-				password: form.data.password
+				emailVerified: false
 			});
 
-			// Verify user exists in database
-			const userFromDb = await findUserById(userId);
-
-			if (!userFromDb) {
-				throw new Error('User was created but could not be found in database');
-			}
-
-			// Create session with Lucia - pass ObjectId as string for the adapter
-			const userIdString = userId;
-			const lucia = await getLucia();
-			const session = await lucia.createSession(userIdString, {});
-			const sessionCookie = lucia.createSessionCookie(session.id);
-
-			cookies.set(sessionCookie.name, sessionCookie.value, {
-				path: '/',
-				...sessionCookie.attributes
-			});
-
-			throw redirect(303, '/home');
 		} catch (error) {
-			// Re-throw SvelteKit errors (redirects, etc.)
-			if (error && typeof error === 'object' && 'status' in error) {
-				throw error;
-			}
 			console.error('Registration error:', error);
+			// If DB insert fails, we might want to delete the auth user or handle it.
+			// For now, just return error.
 			return fail(500, {
 				form,
 				message: error instanceof Error ? error.message : 'Registration failed'
 			});
 		}
+		
+		throw redirect(303, '/home');
 	}
 };

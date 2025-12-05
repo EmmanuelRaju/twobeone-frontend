@@ -2,15 +2,25 @@ import { superValidate } from 'sveltekit-superforms/server';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { fail } from '@sveltejs/kit';
 import { SFamily } from '$lib/schemas';
-import { getProfile } from '$lib/server/services/matrimony/profile';
+import {
+	getProfile,
+	updateFamilyInformation,
+	createProfile,
+	isFamilyComplete
+} from '$lib/server/services/matrimony/profile';
 
-export const load = async ({ locals }) => {
-	const userId = locals.user!.id;
-	const profile = await getProfile(userId);
+export const load = async ({ locals: { safeGetSession } }) => {
+	const { user } = await safeGetSession();
+	const userId = user!.id;
+	let profile = await getProfile(userId);
+
+	if (!profile) {
+		profile = await createProfile(userId);
+	}
 
 	let form;
 
-	if (profile?.family) {
+	if (profile?.family && isFamilyComplete(profile.family)) {
 		form = await superValidate(profile.family, zod4(SFamily));
 	} else {
 		form = await superValidate(zod4(SFamily));
@@ -20,36 +30,28 @@ export const load = async ({ locals }) => {
 };
 
 export const actions = {
-	default: async ({ request, fetch, locals }) => {
-		const userId = locals.user!.id;
+	default: async ({ request, locals: { safeGetSession } }) => {
+		const { user } = await safeGetSession();
+		const userId = user!.id;
 		const form = await superValidate(request, zod4(SFamily));
+
+		if (!form.valid) return fail(400, { form });
+
 		try {
-			if (!form.valid) return fail(400, { form });
-
-			const res = await fetch('/api/matrimony/profile/family-details', {
-				method: 'POST',
-				body: JSON.stringify(form.data)
-			});
-
-			const out = await res.json();
-
-			if (!out.success) {
-				return fail(400, { form, message: out.error ?? 'Failed to save data.' });
-			}
+			await updateFamilyInformation(userId, form.data);
 
 			const refreshedProfile = await getProfile(userId);
-
 			const updatedForm = await superValidate(refreshedProfile!.family, zod4(SFamily));
 
 			return {
 				form: updatedForm,
-				message: out.message,
-				success: out.success,
+				message: 'Family details updated successfully.',
+				success: true,
 				posted: true
 			};
 		} catch (error) {
 			console.error('Error in family information', error);
-			return fail(400, { form, message: 'Something went wrong, try again later' });
+			return fail(500, { form, message: 'Something went wrong, try again later' });
 		}
 	}
 };

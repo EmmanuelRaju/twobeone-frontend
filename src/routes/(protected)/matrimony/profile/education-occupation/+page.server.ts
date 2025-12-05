@@ -2,15 +2,25 @@ import { superValidate } from 'sveltekit-superforms/server';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { fail } from '@sveltejs/kit';
 import { SEducationOccupation } from '$lib/schemas';
-import { getProfile } from '$lib/server/services/matrimony/profile';
+import {
+	getProfile,
+	updateEducationOccupation,
+	createProfile,
+	isEducationOccupationComplete
+} from '$lib/server/services/matrimony/profile';
 
-export const load = async ({ locals }) => {
-	const userId = locals.user!.id;
-	const profile = await getProfile(userId);
+export const load = async ({ locals: { safeGetSession } }) => {
+	const { user } = await safeGetSession();
+	const userId = user!.id;
+	let profile = await getProfile(userId);
+
+	if (!profile) {
+		profile = await createProfile(userId);
+	}
 
 	let form;
 
-	if (profile?.educationOccupation) {
+	if (profile?.educationOccupation && isEducationOccupationComplete(profile.educationOccupation)) {
 		form = await superValidate(profile.educationOccupation, zod4(SEducationOccupation));
 	} else {
 		form = await superValidate(zod4(SEducationOccupation));
@@ -20,25 +30,18 @@ export const load = async ({ locals }) => {
 };
 
 export const actions = {
-	default: async ({ request, fetch, locals }) => {
-		const userId = locals.user!.id;
+	default: async ({ request, locals: { safeGetSession } }) => {
+		const { user } = await safeGetSession();
+		const userId = user!.id;
 		const form = await superValidate(request, zod4(SEducationOccupation));
+
+		if (!form.valid) return fail(400, { form });
+
 		try {
-			if (!form.valid) return fail(400, { form });
+			await updateEducationOccupation(userId, form.data);
 
-			const res = await fetch('/api/matrimony/profile/education-occupation', {
-				method: 'POST',
-				body: JSON.stringify(form.data)
-			});
-
-			const out = await res.json();
-
-			if (!out.success) {
-				return fail(400, { form, message: out.error ?? 'Failed to save data.' });
-			}
-
+			// Refresh profile to get updated data if needed, or just return success
 			const refreshedProfile = await getProfile(userId);
-
 			const updatedForm = await superValidate(
 				refreshedProfile!.educationOccupation,
 				zod4(SEducationOccupation)
@@ -46,13 +49,13 @@ export const actions = {
 
 			return {
 				form: updatedForm,
-				message: out.message,
-				success: out.success,
+				message: 'Education & Occupation updated successfully.',
+				success: true,
 				posted: true
 			};
 		} catch (error) {
 			console.error('Error in education occupation', error);
-			return fail(400, { form, message: 'Something went wrong, try again later' });
+			return fail(500, { form, message: 'Something went wrong, try again later' });
 		}
 	}
 };

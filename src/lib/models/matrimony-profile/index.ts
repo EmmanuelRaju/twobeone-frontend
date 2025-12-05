@@ -7,7 +7,6 @@ import type {
 	TContact,
 	TProfileImages
 } from '$lib/schemas';
-import type { ObjectId } from 'mongodb';
 
 export type TMatrimonyProfileState =
 	| 'in-progress'
@@ -20,8 +19,8 @@ export type TMatrimonyProfileState =
 	| 'banned';
 
 export interface IMatrimonyProfile {
-	_id: ObjectId;
-	userId: ObjectId;
+	id: string;
+	userId: string;
 	publicId: string;
 
 	state: TMatrimonyProfileState;
