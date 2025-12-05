@@ -2,10 +2,16 @@ import { superValidate } from 'sveltekit-superforms/server';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { fail } from '@sveltejs/kit';
 import { SEducationOccupation } from '$lib/schemas';
-import { getProfile, updateEducationOccupation, createProfile } from '$lib/server/services/matrimony/profile';
+import {
+	getProfile,
+	updateEducationOccupation,
+	createProfile,
+	isEducationOccupationComplete
+} from '$lib/server/services/matrimony/profile';
 
-export const load = async ({ locals }) => {
-	const userId = locals.user!.id;
+export const load = async ({ locals: { safeGetSession } }) => {
+	const { user } = await safeGetSession();
+	const userId = user!.id;
 	let profile = await getProfile(userId);
 
 	if (!profile) {
@@ -14,7 +20,7 @@ export const load = async ({ locals }) => {
 
 	let form;
 
-	if (profile?.educationOccupation) {
+	if (profile?.educationOccupation && isEducationOccupationComplete(profile.educationOccupation)) {
 		form = await superValidate(profile.educationOccupation, zod4(SEducationOccupation));
 	} else {
 		form = await superValidate(zod4(SEducationOccupation));
@@ -24,10 +30,11 @@ export const load = async ({ locals }) => {
 };
 
 export const actions = {
-	default: async ({ request, locals }) => {
-		const userId = locals.user!.id;
+	default: async ({ request, locals: { safeGetSession } }) => {
+		const { user } = await safeGetSession();
+		const userId = user!.id;
 		const form = await superValidate(request, zod4(SEducationOccupation));
-		
+
 		if (!form.valid) return fail(400, { form });
 
 		try {

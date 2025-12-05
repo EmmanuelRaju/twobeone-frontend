@@ -48,14 +48,14 @@ export function cleanPayload<TForm>(
 		[key in keyof TForm]?: { dependsOn?: TFieldCondition<TForm>[] };
 	}
 ): TForm {
-	const cleaned: Partial<TForm> = { ...payload };
+	const cleaned: Partial<{ [K in keyof TForm]: TForm[K] | null }> = { ...payload };
 
 	for (const key in fieldDefs) {
 		const typedKey = key as keyof TForm;
 		const allowed = isFieldAllowed(typedKey, payload, fieldDefs);
 
 		if (!allowed) {
-			cleaned[typedKey] = undefined;
+			cleaned[typedKey] = null;
 		}
 	}
 

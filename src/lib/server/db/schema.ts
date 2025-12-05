@@ -33,6 +33,7 @@ export const profiles = pgTable('profiles', {
 		.references(() => users.id, { onDelete: 'cascade' })
 		.notNull()
 		.unique(),
+	publicId: varchar('public_id', { length: 20 }).unique().notNull(),
 
 	// Basic Profile
 	profileCreatedBy: varchar('profile_created_by', { length: 50 }),

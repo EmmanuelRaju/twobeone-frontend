@@ -23,7 +23,10 @@ import { profiles, users } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 
 // Helper to map DB row to IMatrimonyProfile
-function mapRowToProfile(row: { user: typeof users.$inferSelect; profile: typeof profiles.$inferSelect }): IMatrimonyProfile {
+function mapRowToProfile(row: {
+	user: typeof users.$inferSelect;
+	profile: typeof profiles.$inferSelect;
+}): IMatrimonyProfile {
 	const p = row.profile;
 	const u = row.user;
 
@@ -31,30 +34,33 @@ function mapRowToProfile(row: { user: typeof users.$inferSelect; profile: typeof
 	const str = (val: string | null | undefined) => val ?? undefined;
 
 	// Basic Info
-	const basicInformation = (p.dob && p.gender) ? {
-		profileCreatedBy: p.profileCreatedBy as any,
-		name: u.name,
-		dob: p.dob, // Assuming TBasicProfile.dob is string based on error
-		maritalStatus: p.maritalStatus as any,
-		height: p.height as any,
-		weight: p.weight ?? 0,
-		physicalStatus: p.physicalStatus as any,
-		gender: p.gender as any,
-		denomination: p.denomination as any,
-		division: p.division as any,
-		subcaste: str(p.subcaste),
-		motherTongue: p.motherTongue as any,
-		languagesKnown: (p.languagesKnown as string[]) ?? [],
-		eatingHabits: p.eatingHabits as any,
-		drinkingHabits: p.drinkingHabits as any,
-		smokingHabits: p.smokingHabits as any,
-		aboutMe: p.aboutMe ?? ''
-	} : undefined;
+	const basicInformation =
+		p.dob && p.gender
+			? {
+					profileCreatedBy: p.profileCreatedBy as any,
+					name: u.name,
+					dob: p.dob, // Assuming TBasicProfile.dob is string based on error
+					maritalStatus: p.maritalStatus as any,
+					height: p.height as any,
+					weight: p.weight ?? 0,
+					physicalStatus: p.physicalStatus as any,
+					gender: p.gender as any,
+					denomination: p.denomination as any,
+					division: p.division as any,
+					subcaste: str(p.subcaste),
+					motherTongue: p.motherTongue as any,
+					languagesKnown: (p.languagesKnown as string[]) ?? [],
+					eatingHabits: p.eatingHabits as any,
+					drinkingHabits: p.drinkingHabits as any,
+					smokingHabits: p.smokingHabits as any,
+					aboutMe: p.aboutMe ?? ''
+				}
+			: undefined;
 
 	return {
-		_id: p.id.toString(),
+		id: p.id.toString(),
 		userId: p.userId,
-		publicId: 'TODO',
+		publicId: p.publicId,
 		state: (p.isActive ? 'in-progress' : 'banned') as TMatrimonyProfileState,
 
 		basicInformation,
@@ -118,13 +124,14 @@ function mapRowToProfile(row: { user: typeof users.$inferSelect; profile: typeof
 
 // Get profile
 export async function getProfile(userId: string): Promise<IMatrimonyProfile | null> {
-	const result = await db.select({
-		user: users,
-		profile: profiles
-	})
-	.from(profiles)
-	.innerJoin(users, eq(profiles.userId, users.id))
-	.where(eq(profiles.userId, userId));
+	const result = await db
+		.select({
+			user: users,
+			profile: profiles
+		})
+		.from(profiles)
+		.innerJoin(users, eq(profiles.userId, users.id))
+		.where(eq(profiles.userId, userId));
 
 	if (result.length === 0) return null;
 	return mapRowToProfile(result[0]);
@@ -135,11 +142,15 @@ export async function createProfile(userId: string): Promise<IMatrimonyProfile> 
 	const existing = await getProfile(userId);
 	if (existing) return existing;
 
-	const [newProfile] = await db.insert(profiles).values({
-		userId,
-		gender: 'male',
-		dob: new Date().toISOString().split('T')[0] // YYYY-MM-DD
-	}).returning();
+	const [newProfile] = await db
+		.insert(profiles)
+		.values({
+			userId,
+			publicId: generatePublicId(),
+			gender: 'male',
+			dob: new Date().toISOString().split('T')[0] // YYYY-MM-DD
+		})
+		.returning();
 
 	const [user] = await db.select().from(users).where(eq(users.id, userId));
 	if (!user) throw new Error('User not found');
@@ -157,7 +168,8 @@ export async function updateBasicInformation(
 	userId: string,
 	payload: TBasicProfile
 ): Promise<IMatrimonyProfile> {
-	const [updated] = await db.update(profiles)
+	const [updated] = await db
+		.update(profiles)
 		.set({
 			profileCreatedBy: payload.profileCreatedBy,
 			dob: payload.dob, // string
@@ -179,7 +191,7 @@ export async function updateBasicInformation(
 		})
 		.where(eq(profiles.userId, userId))
 		.returning();
-	
+
 	const user = await getUser(userId);
 	return mapRowToProfile({ user, profile: updated });
 }
@@ -197,16 +209,20 @@ export async function updateEducationOccupation(
 	userId: string,
 	payload: TEducationOccupation
 ): Promise<IMatrimonyProfile> {
-	const [updated] = await db.update(profiles)
+	// Clean payload based on conditional rules
+	const cleanedPayload = cleanPayload(payload, educationOccupationRules);
+
+	const [updated] = await db
+		.update(profiles)
 		.set({
-			highestEducation: payload.highestEducation,
-			college: payload.college,
-			educationInDetail: payload.educationInDetail,
-			employedIn: payload.employedIn,
-			employer: payload.employer,
-			occupation: payload.occupation,
-			occupationInDetail: payload.occupationInDetail,
-			annualIncome: payload.annualIncome,
+			highestEducation: cleanedPayload.highestEducation,
+			college: cleanedPayload.college,
+			educationInDetail: cleanedPayload.educationInDetail,
+			employedIn: cleanedPayload.employedIn,
+			employer: cleanedPayload.employer,
+			occupation: cleanedPayload.occupation,
+			occupationInDetail: cleanedPayload.occupationInDetail,
+			annualIncome: cleanedPayload.annualIncome,
 			updatedAt: new Date()
 		})
 		.where(eq(profiles.userId, userId))
@@ -229,7 +245,8 @@ export async function updateFamilyInformation(
 	userId: string,
 	payload: TFamily
 ): Promise<IMatrimonyProfile> {
-	const [updated] = await db.update(profiles)
+	const [updated] = await db
+		.update(profiles)
 		.set({
 			familyValue: payload.familyValue,
 			familyType: payload.familyType,
@@ -266,7 +283,8 @@ export async function updateInterests(
 	userId: string,
 	payload: TInterests
 ): Promise<IMatrimonyProfile> {
-	const [updated] = await db.update(profiles)
+	const [updated] = await db
+		.update(profiles)
 		.set({
 			hobbies: payload.hobbies,
 			interests: payload.interests,
@@ -295,7 +313,8 @@ export async function updateLocation(
 	userId: string,
 	payload: TLocation
 ): Promise<IMatrimonyProfile> {
-	const [updated] = await db.update(profiles)
+	const [updated] = await db
+		.update(profiles)
 		.set({
 			country: payload.country,
 			state: payload.state,
@@ -323,7 +342,8 @@ export async function updateContactDetails(
 	userId: string,
 	payload: TContact
 ): Promise<IMatrimonyProfile> {
-	const [updated] = await db.update(profiles)
+	const [updated] = await db
+		.update(profiles)
 		.set({
 			contactEmail: payload.email,
 			contactMobile: payload.mobile,

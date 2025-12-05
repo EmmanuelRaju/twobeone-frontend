@@ -2,10 +2,16 @@ import { superValidate } from 'sveltekit-superforms/server';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { fail } from '@sveltejs/kit';
 import { SBasicProfile } from '$lib/schemas';
-import { getProfile, updateBasicInformation, createProfile } from '$lib/server/services/matrimony/profile';
+import {
+	getProfile,
+	updateBasicInformation,
+	createProfile,
+	isBasicProfileComplete
+} from '$lib/server/services/matrimony/profile';
 
-export const load = async ({ locals }) => {
-	const userId = locals.user!.id;
+export const load = async ({ locals: { safeGetSession } }) => {
+	const { user } = await safeGetSession();
+	const userId = user!.id;
 	let profile = await getProfile(userId);
 
 	// Ensure profile exists
@@ -15,7 +21,7 @@ export const load = async ({ locals }) => {
 
 	let form;
 
-	if (profile?.basicInformation) {
+	if (profile?.basicInformation && isBasicProfileComplete(profile.basicInformation)) {
 		form = await superValidate(profile.basicInformation, zod4(SBasicProfile));
 	} else {
 		form = await superValidate(zod4(SBasicProfile));
@@ -25,10 +31,11 @@ export const load = async ({ locals }) => {
 };
 
 export const actions = {
-	default: async ({ request, locals }) => {
-		const userId = locals.user!.id;
+	default: async ({ request, locals: { safeGetSession } }) => {
+		const { user } = await safeGetSession();
+		const userId = user!.id;
 		const form = await superValidate(request, zod4(SBasicProfile));
-		
+
 		if (!form.valid) return fail(400, { form });
 
 		try {

@@ -19,7 +19,7 @@ export type TMatrimonyProfileState =
 	| 'banned';
 
 export interface IMatrimonyProfile {
-	_id: string;
+	id: string;
 	userId: string;
 	publicId: string;
 
