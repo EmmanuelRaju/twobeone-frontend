@@ -1,27 +1,60 @@
 <script lang="ts">
 	import { toasts } from '$lib/stores/toast';
+	import type { SupabaseClient } from '@supabase/supabase-js';
 
-	let { value = $bindable([]), max = 1 } = $props();
+	let { value = $bindable([]), max = 1, userId, supabase } = $props<{
+		value?: string[];
+		max?: number;
+		userId: string;
+		supabase: SupabaseClient;
+	}>();
 
 	let uploading = $state(false);
 	let pendingPreviews = $state<Array<{ file: File; preview: string }>>([]);
+
+	// Helper to extract path from URL if needed, or just store full URL
+	// We will store full public URL for simplicity in display, but for deletion we might need the path.
+	// Actually, storing the full URL is fine. We can extract the path when deleting.
+	// Format: https://[project].supabase.co/storage/v1/object/public/[bucket]/[path]
+
+	function getPathFromUrl(url: string) {
+		try {
+			const urlObj = new URL(url);
+			// Path structure: /storage/v1/object/public/profile-images/userId/filename
+			const pathParts = urlObj.pathname.split('/profile-images/');
+			if (pathParts.length > 1) {
+				return decodeURIComponent(pathParts[1]);
+			}
+			return null;
+		} catch (e) {
+			console.error('Error parsing URL', e);
+			return null;
+		}
+	}
 
 	async function uploadFile(file: File) {
 		uploading = true;
 
 		try {
-			// Step 1: Get signed upload URL
-			const res = await fetch('/api/images/get-upload-url', { method: 'POST' });
-			const { uploadURL, imageId } = await res.json();
+			if (!userId) throw new Error('User not found');
 
-			// Step 2: Upload file directly
-			const fd = new FormData();
-			fd.append('file', file);
+			const fileExt = file.name.split('.').pop();
+			const fileName = `${userId}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+			const filePath = `${fileName}`;
 
-			await fetch(uploadURL, { method: 'POST', body: fd });
+			const { error: uploadError } = await supabase.storage
+				.from('profile-images')
+				.upload(filePath, file);
 
-			// Step 3: Update local state
-			value = [...value, imageId];
+			if (uploadError) throw uploadError;
+
+			const { data: { publicUrl } } = supabase.storage
+				.from('profile-images')
+				.getPublicUrl(filePath);
+
+			value = [...value, publicUrl];
+			toasts.addToast({ type: 'success', message: 'Image uploaded successfully' });
+
 		} catch (error) {
 			console.error('Error while uploading image', error);
 			toasts.addToast({ type: 'error', message: 'Error while uploading image, try again later' });
@@ -30,10 +63,25 @@
 		}
 	}
 
-	async function remove(imageId: string) {
-		await fetch(`/api/images/${imageId}`, { method: 'DELETE' });
-
-		value = value.filter((id) => id !== imageId);
+	async function remove(imageUrl: string) {
+		try {
+			const path = getPathFromUrl(imageUrl);
+			if (path) {
+				const { error } = await supabase.storage
+					.from('profile-images')
+					.remove([path]);
+				
+				if (error) {
+					console.error('Error removing file from storage', error);
+					// We might still want to remove it from the list if it's gone or inaccessible
+				}
+			}
+			
+			value = value.filter((url: string) => url !== imageUrl);
+		} catch (error) {
+			console.error('Error in remove function', error);
+			toasts.addToast({ type: 'error', message: 'Error removing image' });
+		}
 	}
 
 	function handleFileSelect(e: Event) {
@@ -57,15 +105,14 @@
 	async function approvePreview(index: number) {
 		try {
 			const { file } = pendingPreviews[index];
+			// Remove from pending immediately to avoid UI glitch if upload is fast, 
+			// but better to keep it and show loading state? 
+			// The current logic removes it then uploads. If upload fails, it's gone from preview.
+			// Let's keep existing logic flow but maybe improve error handling later.
 			pendingPreviews = pendingPreviews.filter((_, i) => i !== index);
 			await uploadFile(file);
-			toasts.addToast({ type: 'success', message: 'Image uploaded successfully' });
 		} catch (error) {
 			console.error('Error while approving image upload', error);
-			toasts.addToast({
-				type: 'error',
-				message: 'Error while approving image upload, try again later'
-			});
 		}
 	}
 
@@ -78,17 +125,17 @@
 </script>
 
 <div class="grid h-full w-full grid-cols-12 gap-2.5">
-	{#each value as imgId}
+	{#each value as imageUrl}
 		<div
 			class="relative col-span-full flex flex-col gap-2.5 overflow-clip rounded-box border border-gray-300 bg-base-200 sm:col-span-6 lg:col-span-4"
 		>
 			<img
 				class="w-full object-contain"
 				alt="uploaded"
-				src={`https://imagedelivery.net/${import.meta.env.VITE_CF_IMAGES_HASH}/${imgId}/public`}
+				src={imageUrl}
 			/>
 			<div class="flex items-center justify-center gap-2.5 pb-5">
-				<button class="btn" onclick={() => remove(imgId)}> Remove </button>
+				<button class="btn" onclick={() => remove(imageUrl)}> Remove </button>
 			</div>
 		</div>
 	{/each}
