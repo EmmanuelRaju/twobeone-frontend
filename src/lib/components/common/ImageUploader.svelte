@@ -2,35 +2,24 @@
 	import { toasts } from '$lib/stores/toast';
 	import type { SupabaseClient } from '@supabase/supabase-js';
 
-	let { value = $bindable([]), max = 1, userId, supabase } = $props<{
+	let {
+		value = $bindable([]),
+		max = 1,
+		userId,
+		supabase,
+		onUpload,
+		onRemove
+	} = $props<{
 		value?: string[];
 		max?: number;
 		userId: string;
 		supabase: SupabaseClient;
+		onUpload?: (url: string) => void;
+		onRemove?: (url: string) => void;
 	}>();
 
 	let uploading = $state(false);
 	let pendingPreviews = $state<Array<{ file: File; preview: string }>>([]);
-
-	// Helper to extract path from URL if needed, or just store full URL
-	// We will store full public URL for simplicity in display, but for deletion we might need the path.
-	// Actually, storing the full URL is fine. We can extract the path when deleting.
-	// Format: https://[project].supabase.co/storage/v1/object/public/[bucket]/[path]
-
-	function getPathFromUrl(url: string) {
-		try {
-			const urlObj = new URL(url);
-			// Path structure: /storage/v1/object/public/profile-images/userId/filename
-			const pathParts = urlObj.pathname.split('/profile-images/');
-			if (pathParts.length > 1) {
-				return decodeURIComponent(pathParts[1]);
-			}
-			return null;
-		} catch (e) {
-			console.error('Error parsing URL', e);
-			return null;
-		}
-	}
 
 	async function uploadFile(file: File) {
 		uploading = true;
@@ -53,6 +42,7 @@
 				.getPublicUrl(filePath);
 
 			value = [...value, publicUrl];
+			onUpload?.(publicUrl);
 			toasts.addToast({ type: 'success', message: 'Image uploaded successfully' });
 
 		} catch (error) {
@@ -65,19 +55,10 @@
 
 	async function remove(imageUrl: string) {
 		try {
-			const path = getPathFromUrl(imageUrl);
-			if (path) {
-				const { error } = await supabase.storage
-					.from('profile-images')
-					.remove([path]);
-				
-				if (error) {
-					console.error('Error removing file from storage', error);
-					// We might still want to remove it from the list if it's gone or inaccessible
-				}
-			}
-			
+			// We delegate the actual deletion (storage + db) to the parent via onRemove
+			// But we update local state immediately for optimistic UI
 			value = value.filter((url: string) => url !== imageUrl);
+			onRemove?.(imageUrl);
 		} catch (error) {
 			console.error('Error in remove function', error);
 			toasts.addToast({ type: 'error', message: 'Error removing image' });
@@ -105,10 +86,6 @@
 	async function approvePreview(index: number) {
 		try {
 			const { file } = pendingPreviews[index];
-			// Remove from pending immediately to avoid UI glitch if upload is fast, 
-			// but better to keep it and show loading state? 
-			// The current logic removes it then uploads. If upload fails, it's gone from preview.
-			// Let's keep existing logic flow but maybe improve error handling later.
 			pendingPreviews = pendingPreviews.filter((_, i) => i !== index);
 			await uploadFile(file);
 		} catch (error) {
